@@ -80,6 +80,7 @@ alias reload="omz reload"
 alias anicli="ani-cli"
 alias vim="nvim"
 alias v="nvim"
+alias v.="v ."
 
 # Handy change dir shortcuts
 alias ..='cd ..'
@@ -97,7 +98,8 @@ alias ssh='kitten ssh'
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-#Display Pokemon
+#Display neofetch
 neofetch
 
+eval "$(zoxide init --cmd cd zsh)"
 export PATH=$PATH:/home/justin/.spicetify
