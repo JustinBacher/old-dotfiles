@@ -81,6 +81,8 @@ alias anicli="ani-cli"
 alias vim="nvim"
 alias v="nvim"
 alias v.="v ."
+alias cls="clear"
+alias rld="reload"
 
 # Handy change dir shortcuts
 alias ..='cd ..'
@@ -103,3 +105,11 @@ neofetch
 
 eval "$(zoxide init --cmd cd zsh)"
 export PATH=$PATH:/home/justin/.spicetify
+
+# pnpm
+export PNPM_HOME="/home/justin/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
