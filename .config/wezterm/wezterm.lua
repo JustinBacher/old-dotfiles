@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local keymaps = require("keymaps")
 
 local config = (
   wezterm.config_builder
@@ -12,8 +13,8 @@ config.default_prog = { "/usr/bin/fish", "-l" }
 
 config.color_scheme = "Rosé Pine Moon (Gogh)"
 config.font = wezterm.font_with_fallback({
-  { family = "Iosevka Nerd Font", scale = 1.2, weight = "Medium", },
-  { family = "FantasqueSansM Nerd Font", scale = 1.3, },
+    { family = "Iosevka Nerd Font", scale = 1.2, weight = "Medium", },
+    { family = "FantasqueSansM Nerd Font", scale = 1.3, },
 })
 config.window_background_opacity = 0.9
 config.window_decorations = "RESIZE"
@@ -21,17 +22,15 @@ config.window_close_confirmation = "NeverPrompt"
 config.scrollback_lines = 3000
 config.default_workspace = "main"
 
--- Dim inactive panes
-config.inactive_pane_hsb = {
-  saturation = 0.24,
-  brightness = 0.5,
-}
-
-config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
-
-local keymaps = require("keymaps")
+config.leader = keymaps.leader
 config.keys = keymaps.keys
 config.key_tables = keymaps.key_tables
+
+-- Dim inactive panes
+config.inactive_pane_hsb = {
+    saturation = 0.24,
+    brightness = 0.5,
+}
 
 -- Tab bar
 -- I don't like the look of "fancy" tab bar
