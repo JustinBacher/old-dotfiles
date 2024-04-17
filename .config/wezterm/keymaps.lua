@@ -1,6 +1,14 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
+local function key(k, a, m)
+  return {
+    key = k,
+    mods = m or "LEADER",
+    action = a 
+  }
+end
+
 local mappings = {
   keys = {
   -- Send C-a when pressing C-a twice
