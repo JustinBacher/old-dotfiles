@@ -1,6 +1,5 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
-require("options")
 
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   -- bootstrap lazy.nvim
