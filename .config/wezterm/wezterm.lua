@@ -1,16 +1,14 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-local fish_path = "/opt/homebrew/bin/fish"
+local config = (
+  wezterm.config_builder
+  and wezterm.config_builder()
+  or {}
+)
 
-local config = {}
--- Use config builder object if possible
-if wezterm.config_builder then
-    config = wezterm.config_builder()
-end
-
--- Settings
-config.default_prog = { fish_path, "-l" }
+-- Use Fish as the default shell
+config.default_prog = { "/usr/bin/fish", "-l" }
 
 config.color_scheme = "Rosé Pine Moon (Gogh)"
 config.font = wezterm.font_with_fallback({
@@ -26,42 +24,18 @@ config.default_workspace = "main"
 -- Dim inactive panes
 config.inactive_pane_hsb = {
   saturation = 0.24,
-  brightness = 0.5
+  brightness = 0.5,
 }
-
--- _  __                 __  __                       
--- | |/ /   ___   _   _  |  \/  |   __ _   _ __    ___ 
--- | ' /   / _ \ | | | | | |\/| |  / _` | | '_ \  / __|
--- | . \  |  __/ | |_| | | |  | | | (_| | | |_) | \__ \
--- |_|\_\  \___|  \__, | |_|  |_|  \__,_| | .__/  |___/
---                |___/                   |_|          
 
 config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
-config.keys = require("keymaps")
 
-
-config.key_tables = {
-  resize_pane = {
-    { key = "h", action = act.AdjustPaneSize { "Left", 1 } },
-    { key = "j", action = act.AdjustPaneSize { "Down", 1 } },
-    { key = "k", action = act.AdjustPaneSize { "Up", 1 } },
-    { key = "l", action = act.AdjustPaneSize { "Right", 1 } },
-    { key = "Escape", action = "PopKeyTable" },
-    { key = "Enter", action = "PopKeyTable" },
-  },
-  move_tab = {
-      { key = "h", action = act.MoveTabRelative(-1) },
-      { key = "j", action = act.MoveTabRelative(-1) },
-    { key = "k", action = act.MoveTabRelative(1) },
-    { key = "l", action = act.MoveTabRelative(1) },
-    { key = "Escape", action = "PopKeyTable" },
-    { key = "Enter", action = "PopKeyTable" },
-  }
-}
+local keymaps = require("keymaps")
+config.keys = keymaps.keys
+config.key_tables = keymaps.key_tables
 
 -- Tab bar
 -- I don't like the look of "fancy" tab bar
--- config.use_fancy_tab_bar = false
+config.use_fancy_tab_bar = false
 config.status_update_interval = 1000
 config.tab_bar_at_bottom = false
 wezterm.on("update-status", function(window, pane)
