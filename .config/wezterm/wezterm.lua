@@ -19,7 +19,7 @@ config.font = wezterm.font_with_fallback({
 })
 config.window_background_opacity = 0.9
 config.window_decorations = "RESIZE"
-config.window_close_confirmation = "AlwaysPrompt"
+config.window_close_confirmation = "NeverPrompt"
 config.scrollback_lines = 3000
 config.default_workspace = "main"
 
@@ -29,7 +29,13 @@ config.inactive_pane_hsb = {
   brightness = 0.5
 }
 
--- Keys
+-- _  __                 __  __                       
+-- | |/ /   ___   _   _  |  \/  |   __ _   _ __    ___ 
+-- | ' /   / _ \ | | | | | |\/| |  / _` | | '_ \  / __|
+-- | . \  |  __/ | |_| | | |  | | | (_| | | |_) | \__ \
+-- |_|\_\  \___|  \__, | |_|  |_|  \__,_| | .__/  |___/
+--                |___/                   |_|          
+
 config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 config.keys = {
   -- Send C-a when pressing C-a twice
@@ -112,7 +118,7 @@ config.key_tables = {
 
 -- Tab bar
 -- I don't like the look of "fancy" tab bar
-config.use_fancy_tab_bar = false
+-- config.use_fancy_tab_bar = false
 config.status_update_interval = 1000
 config.tab_bar_at_bottom = false
 wezterm.on("update-status", function(window, pane)
