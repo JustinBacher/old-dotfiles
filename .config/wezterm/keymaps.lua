@@ -1,7 +1,8 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-return {
+local mappings = {
+  keys = {
   -- Send C-a when pressing C-a twice
   { key = "a", mods = "LEADER|CTRL", action = act.SendKey { key = "a", mods = "CTRL" } },
   { key = "c", mods = "LEADER", action = act.ActivateCopyMode },
@@ -50,5 +51,34 @@ return {
 
   -- Lastly, workspace
   { key = "w", mods = "LEADER", action = act.ShowLauncherArgs { flags = "FUZZY|WORKSPACES" } },
-
+  },
+  key_tables = {
+  resize_pane = {
+    { key = "h", action = act.AdjustPaneSize { "Left", 1 } },
+    { key = "j", action = act.AdjustPaneSize { "Down", 1 } },
+    { key = "k", action = act.AdjustPaneSize { "Up", 1 } },
+    { key = "l", action = act.AdjustPaneSize { "Right", 1 } },
+    { key = "Escape", action = "PopKeyTable" },
+    { key = "Enter", action = "PopKeyTable" },
+  },
+  move_tab = {
+      { key = "h", action = act.MoveTabRelative(-1) },
+      { key = "j", action = act.MoveTabRelative(-1) },
+    { key = "k", action = act.MoveTabRelative(1) },
+    { key = "l", action = act.MoveTabRelative(1) },
+    { key = "Escape", action = "PopKeyTable" },
+    { key = "Enter", action = "PopKeyTable" },
+  }
+  }
 }
+
+-- I can use the tab navigator (LDR t), but I also want to quickly navigate tabs with index
+for i = 1, 9 do
+  table.insert(mappings.keys, {
+    key = tostring(i),
+    mods = "LEADER",
+    action = act.ActivateTab(i - 1)
+  })
+end
+
+return mappings
