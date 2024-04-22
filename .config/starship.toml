@@ -1,0 +1,270 @@
+format = """\
+[](fg:#5cebf2)\
+[󰣇 ](bg:#5cebf2 fg:#090c0c)\
+[](fg:#5cebf2 bg:#1C3A5E)\
+[$shell$c$cmake$cobol$daml$dart$deno$dotnet$elixir$elm$erlang$fennel$golang$guix_shell$haskell$haxe$helm$java$julia$kotlin$gradle$lua$nim$nodejs$ocaml$opa$perl$php$pulumi$purescript$python$quarto$raku$rlang$ruby$rust$scala$solidity$swift$terraform$typst$vlang$vagrant$zig$buf$nix_shell$conda$meson$spack$aws$gcloud$crystal](bg:#1C3A5E fg:#8DFBD2)\
+[](fg:#1C3A5E bg:#3B76F0)\
+$directory\
+${custom.directory_end}${custom.directory_end_git}\
+$git_branch\
+$git_status\
+$git_metrics\
+${custom.git_end}
+$character\
+"""
+
+right_format = """\
+[](fg:#332374)\
+[$cmd_duration ](fg:#C2DE21 bg:#332374)\
+[](fg:#124d6b bg:#332374)\
+[${custom.pacman_updates}](fg:#FFEA00 bg:#124d6b)\
+[](fg:#493a1a bg:#124d6b)\
+[${custom.aur_updates}](fg:#E3D3B1 bg:#493a1a)\
+[](fg:#493a1a)\
+"""
+
+command_timeout = 10000
+
+[cmd_duration]
+min_time = 4
+show_milliseconds = false
+disabled = false
+symbol = "󰄉 "
+format = "$symbol$duration"
+
+continuation_prompt = '▶▶ '
+
+
+[custom.git_end]
+format = "[](fg:#e965a5)" 
+when = 'git rev-parse --is-inside-work-tree 2> /dev/null'
+
+[custom.directory_end_git]
+format = "[](fg:#3B76F0 bg:#e965a5)"
+when = 'git rev-parse --is-inside-work-tree 2> /dev/null'
+
+[custom.directory_end]
+format = "[](fg:#3B76F0)"
+when = '! git rev-parse --is-inside-work-tree 2> /dev/null'
+
+[custom.pacman_updates]
+command = """
+CACHE_FILE="${HOME}/.cache/pacman_update_count.txt"
+write_updates () {
+  echo "$(checkupdates --nocolor | wc -l)" > $CACHE_FILE
+}
+if ! test -f $CACHE_FILE; then
+  touch $CACHE_FILE 
+  write_updates
+fi
+if test `find $CACHE_FILE -mmin +1`; then
+  write_updates
+fi
+echo "$(<$CACHE_FILE)"
+"""
+when = "true"
+symbol = "󰮯 "
+shell = ["bash", "--noprofile", "--norc"]
+format = "[$symbol](fg:#FFEA00 bg:#124d6b)$output\u00a0"
+
+[custom.aur_updates]
+command = """RATE=5;CACHE_FILE="${HOME}/.cache/aur_update_count.txt"; write_updates () { echo "$(pacman -Qm | aur vercmp | wc -l)" > $CACHE_FILE; }; if ! test -f $CACHE_FILE; then touch $CACHE_FILE && write_updates; fi; if test `find $CACHE_FILE -mmin +$RATE`; then write_updates; fi; echo "$(<$CACHE_FILE)""""
+when = "true"
+symbol = "  "
+shell = ["bash", "--noprofile", "--norc"]
+format = "[$symbol](fg:#E3D3B1 bg:#493a1a)$output"
+
+[shell]
+format = ' $indicator'
+fish_indicator = '󰈺 '
+zsh_indicator = '󰏰 '
+unknown_indicator = ' '
+disabled = false
+
+[directory]
+format = "[ ﱮ $path ]($style)"
+style = "fg:#E4E4E4 bg:#3B76F0"
+read_only = " 󰌾"
+
+
+[git_branch]
+format = '[ $symbol$branch(:$remote_branch) ]($style)'
+symbol = "  "
+style = "fg:#1C3A5E bg:#e965a5"
+
+[git_status]
+format = '[$all_status]($style)'
+style = "fg:#1C3A5E bg:#e965a5"
+
+[git_metrics]
+format = "([+$added]($added_style))[]($added_style)"
+added_style = "fg:#1C3A5E bg:#e965a5"
+deleted_style = "fg:bright-red bg:235"
+disabled = false
+
+[hg_branch]
+format = "[ $symbol$branch ]($style)"
+symbol = " "
+
+[character]
+success_symbol = '[ ➜](bold green) '
+error_symbol = '[ ➜](bold red) '
+
+[time]
+disabled = true
+time_format = "%R" # Hour:Minute Format
+style = "bg:#1d2230"
+format = '[[ 󱑍 $time ](bg:#1C3A5E fg:#8DFBD2)]'
+
+[aws]
+symbol = "  "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[crystal]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[fennel]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hostname]
+ssh_symbol = " "
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[kotlin]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[ocaml]
+symbol = " "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
+
+[package]
+symbol = "󰏗 "
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[pijul_channel]
+symbol = " "
+
+[python]
+symbol = " "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = " "
+
+[scala]
+symbol = " "
+
+[swift]
+symbol = " "
+
+[zig]
+symbol = " "
