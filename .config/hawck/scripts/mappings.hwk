@@ -1,0 +1,3 @@
+mode("Caps => Ctrl mode", down + key "F7") => {
+    key "Caps_Lock" => replace "Control"
+}

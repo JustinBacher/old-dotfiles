@@ -48,27 +48,14 @@ format = "[](fg:#3B76F0)"
 when = '! git rev-parse --is-inside-work-tree 2> /dev/null'
 
 [custom.pacman_updates]
-command = """
-CACHE_FILE="${HOME}/.cache/pacman_update_count.txt"
-write_updates () {
-  echo "$(checkupdates --nocolor | wc -l)" > $CACHE_FILE
-}
-if ! test -f $CACHE_FILE; then
-  touch $CACHE_FILE 
-  write_updates
-fi
-if test `find $CACHE_FILE -mmin +1`; then
-  write_updates
-fi
-echo "$(<$CACHE_FILE)"
-"""
+command = """bkt --ttl=10m -- checkupdates --nocolor | wc -l"""
 when = "true"
 symbol = "󰮯 "
 shell = ["bash", "--noprofile", "--norc"]
 format = "[$symbol](fg:#FFEA00 bg:#124d6b)$output\u00a0"
 
 [custom.aur_updates]
-command = """RATE=5;CACHE_FILE="${HOME}/.cache/aur_update_count.txt"; write_updates () { echo "$(pacman -Qm | aur vercmp | wc -l)" > $CACHE_FILE; }; if ! test -f $CACHE_FILE; then touch $CACHE_FILE && write_updates; fi; if test `find $CACHE_FILE -mmin +$RATE`; then write_updates; fi; echo "$(<$CACHE_FILE)""""
+command = """bkt --ttl=10m -- pacman -Qm | aur vercmp | wc -l"""
 when = "true"
 symbol = "  "
 shell = ["bash", "--noprofile", "--norc"]
