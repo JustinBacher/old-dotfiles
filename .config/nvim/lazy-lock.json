@@ -1,7 +1,9 @@
 {
   "LazyVim": { "branch": "main", "commit": "f086bcde253c29be9a2b9c90b413a516f5d5a3b2" },
   "cmp-nvim-lsp": { "branch": "main", "commit": "5af77f54de1b16c34b23cba810150689a3a90312" },
+  "codecompanion.nvim": { "branch": "main", "commit": "73b2e432e3a6765e16669f23a364db8aebed60b9" },
   "dracula.nvim": { "branch": "main", "commit": "8d8bddb8814c3e7e62d80dda65a9876f97eb699c" },
+  "dressing.nvim": { "branch": "master", "commit": "5162edb1442a729a885c45455a07e9a89058be2f" },
   "edgy.nvim": { "branch": "main", "commit": "de79b7d92a5979cd71a9a1d8b6282515345e5055" },
   "lazy-lsp.nvim": { "branch": "master", "commit": "68b6a6f91000438ec81c00abc55b3a4a0a9eb4d4" },
   "lazy.nvim": { "branch": "main", "commit": "3f13f080434ac942b150679223d54f5ca91e0d52" },
@@ -15,7 +17,6 @@
   "nvim-navic": { "branch": "master", "commit": "8649f694d3e76ee10c19255dece6411c29206a54" },
   "nvim-treesitter": { "branch": "master", "commit": "b04ccbd0e041bb05f3eef271124da02497d9d10c" },
   "nvim-web-devicons": { "branch": "master", "commit": "beb6367ab8496c9e43f22e0252735fdadae1872d" },
-  "ogpt.nvim": { "branch": "main", "commit": "aad5dfbbbc6e90e12cb15b77d0dc15da83077b48" },
   "plenary.nvim": { "branch": "master", "commit": "5129a3693c482fcbc5ab99a7706ffc4360b995a0" },
   "telescope.nvim": { "branch": "master", "commit": "7d1698f3d88b448e0639974248cc17f49b7b8acf" },
   "trouble.nvim": { "branch": "main", "commit": "b9cf677f20bb2faa2dacfa870b084e568dca9572" },
