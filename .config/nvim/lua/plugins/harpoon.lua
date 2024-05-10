@@ -1,5 +1,6 @@
 return {
     "ThePrimeagen/harpoon",
+    event = "VeryLazy",
     keys = {
       { "<leader>a", require("harpoon.mark").add_file, { desc = "Harpoon: Mark File" } },
       { "<C-e>", require("harpoon.ui").toggle_quick_menu, { desc = "Toggle Harpoon Menu" } },

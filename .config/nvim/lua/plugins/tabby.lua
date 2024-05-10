@@ -5,7 +5,7 @@ return {
 	init = function()
 		vim.o.showtabline = 2
 	end,
-	dependencies = 'nvim-tree/nvim-web-devicons',
+	dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
 	config = function()
 		local util = require('tabby.util')
 
