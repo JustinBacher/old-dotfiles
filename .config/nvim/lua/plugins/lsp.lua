@@ -3,7 +3,27 @@ return {
   branch = "v3.x",
   dependencies = {
     -- LSP Support
-    { "neovim/nvim-lspconfig" }, -- Required
+    {
+      "neovim/nvim-lspconfig",
+      dependencies = {
+        {
+            "SmiteshP/nvim-navbuddy",
+            dependencies = {
+                "SmiteshP/nvim-navic",
+                "MunifTanjim/nui.nvim"
+            },
+            opts = {
+              lsp = { auto_attach = true },
+              window = {
+                border = "rounded",
+              }
+            },
+            keys = { 
+              { "<leader>p", "<cmd>Navbuddy<CR>", desc = "Show Breadcrumbs" },
+             },
+        }
+    },
+    },
     { -- Optional
       "williamboman/mason.nvim",
       build = function()
