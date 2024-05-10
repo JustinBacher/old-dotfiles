@@ -16,11 +16,7 @@ $character\
 right_format = """\
 [](fg:#332374)\
 [$cmd_duration ](fg:#C2DE21 bg:#332374)\
-[](fg:#124d6b bg:#332374)\
-[${custom.pacman_updates}](fg:#FFEA00 bg:#124d6b)\
-[](fg:#493a1a bg:#124d6b)\
-[${custom.aur_updates}](fg:#E3D3B1 bg:#493a1a)\
-[](fg:#493a1a)\
+[](fg:#332374)\
 """
 
 command_timeout = 10000

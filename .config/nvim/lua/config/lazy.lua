@@ -12,7 +12,10 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+vim.g.maplocalleader = " "
+vim.opt.termguicolors = true
+vim.opt.relativenumber = true
+vim.cmd("au ColorScheme * hi Comment cterm=italic gui=italic") -- This fixed the italics not showing up for some reason
 
 require("lazy").setup({
 	spec = {
@@ -20,10 +23,8 @@ require("lazy").setup({
 	},
 	defaults = {
 		lazy = false,
-		version = false, -- always use the latest git commit
-		-- version = "*", -- try installing the latest stable version for plugins that support semver
+		version = "*", -- try installing the latest stable version for plugins that support semver
 	},
-	install = { colorscheme = { "catppuccin" } },
 	checker = { enabled = true },
 	performance = {
 		rtp = {
@@ -40,3 +41,5 @@ require("lazy").setup({
 		},
 	},
 })
+
+require("config.theme")
