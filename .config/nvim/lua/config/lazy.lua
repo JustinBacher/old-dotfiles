@@ -11,12 +11,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-vim.opt.termguicolors = true
-vim.opt.relativenumber = true
-vim.cmd("au ColorScheme * hi Comment cterm=italic gui=italic") -- This fixed the italics not showing up for some reason
-
 require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
@@ -43,3 +37,13 @@ require("lazy").setup({
 })
 
 require("config.theme")
+
+local remaps = require("config.remaps")
+for _, remap in ipairs(remaps) do
+	local bind = table.remove(remap, 1)
+	local result = table.remove(remap, 1)
+	local mode = remap.mode or "n"
+	table.mode = nil
+
+	vim.keymap.set(mode, bind, result, remap)
+end

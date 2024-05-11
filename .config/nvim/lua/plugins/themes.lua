@@ -7,7 +7,7 @@ return {
 		priority = 1000,
 		opts = { transparent_bg = true, italic_comment = true },
 	},
-	{ "folke/tokyonight.nvim", lazy = false, name = "tokyonight", priority = 1000 },
+	{ "folke/tokyonight.nvim", lazy = false, name = "tokyonight", priority = 1000, opts = { transparent = true } },
 	{
 		"catppuccin/nvim",
 		lazy = false,
