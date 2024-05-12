@@ -37,13 +37,14 @@ require("lazy").setup({
 })
 
 require("config.theme")
+require("config.autocmds")
 
 local remaps = require("config.remaps")
 for _, remap in ipairs(remaps) do
 	local bind = table.remove(remap, 1)
 	local result = table.remove(remap, 1)
 	local mode = remap.mode or "n"
-	table.mode = nil
+	remap.mode = nil
 
 	vim.keymap.set(mode, bind, result, remap)
 end
