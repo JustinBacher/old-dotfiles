@@ -16,7 +16,7 @@ return {
 	{
 		"echasnovski/mini.indentscope",
 		version = false,
-		opts = { symbol = "" },
+		opts = { symbol = "▒" },
 	},
 	{
 		"echasnovski/mini.map",
