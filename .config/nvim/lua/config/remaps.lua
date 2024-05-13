@@ -1,3 +1,11 @@
+local diagnostic_goto = function(next, severity)
+  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
+  severity = severity and vim.diagnostic.severity[severity] or nil
+  return function()
+    go({ severity = severity })
+  end
+end
+
 return {
 	-- Global ease of use
 	{ "<leader>qq", "<cmd>qa<cr>", desc = "Quit All Buffers" },
@@ -21,9 +29,23 @@ return {
 
 	-- Tabs
 	{ "<Tab>", "<cmd>bnext<cr>", desc = "Next Tab" },
-	{ "<S-Tab>", "<cmd>bprevious<cr>", desc = "Previous Tab" },
+ { "<S-Tab>", "<cmd>bprevious<cr>", desc = "Previous Tab" },
+
+-- Windows
+ { "<leader>wd", "<C-W>c", desc = "Delete Window", remap = true },
+ { "<leader>wj", "<C-W>s", desc = "Split Window Below", remap = true },
+ { "<leader>wl", "<C-W>v", desc = "Split Window Right", remap = true },
+ { "<leader>wrh", "<cmd>vertical resize -5", desc = "Resize Window Up" },
+ { "<leader>wrj", "<cmd>resize +5", desc = "Resize Window Down" },
+
+-- Diagnostics
+ { "<leader>dd", vim.diagnostic.open_float, desc = "Line Diagnostics" },
+ { "<leader>dj", diagnostic_goto(true), desc = "Next Diagnostic" },
+ { "<leader>dk", diagnostic_goto(false), desc = "Prev Diagnostic" },
 
 	-- Miscellaneous
+ { "<leader>ll", "<cmd>lopen<cr>", desc = "Location List" },
+ { "<leader>qf", "<cmd>copen<cr>", desc = "Quickfix List" },
 	{ "U", "<C-r>", desc = "Redo" },
 	{ "<esc>", "<cmd>noh<cr><esc>", desc = "Escape and Clear hlsearch" },
 }
