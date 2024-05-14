@@ -2,12 +2,15 @@ return {
 	"monaqa/dial.nvim",
 	config = function()
 		-- Don't know why I need to specify keymaps like this and not as lazy keys but meh whatever
-		vim.keymap.set("n", "<C-a>", require("dial.map").inc_normal(), { silent = true })
-		vim.keymap.set("n", "<C-x>", require("dial.map").dec_normal(), { silent = true })
-		vim.keymap.set("x", "<C-a>", require("dial.map").inc_visual(), { silent = true })
-		vim.keymap.set("x", "<C-x>", require("dial.map").dec_visual(), { silent = true })
-		vim.keymap.set("x", "g<C-a>", require("dial.map").inc_gvisual(), { silent = true })
-		vim.keymap.set("x", "g<C-x>", require("dial.map").dec_gvisual(), { silent = true })
+		local dial_map = require("dial.map")
+		local map = vim.keymap.set
+		local opts = { silent = true }
+		map("n", "<C-a>", dial_map.inc_normal(), opts)
+		map("n", "<C-x>", dial_map.dec_normal(), opts)
+		map("x", "<C-a>", dial_map.inc_visual(), opts)
+		map("x", "<C-x>", dial_map.dec_visual(), opts)
+		map("x", "g<C-a>", dial_map.inc_gvisual(), opts)
+		map("x", "g<C-x>", dial_map.dec_gvisual(), opts)
 
 		local augend = require("dial.augend")
 		require("dial.config").augends:register_group({
