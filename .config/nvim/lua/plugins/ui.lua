@@ -1,7 +1,7 @@
 return {
     {
         "folke/trouble.nvim",
-        -- opts will be merged with the parent spec
+        event = "LazyFile"
         dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
         opts = { use_diagnostic_signs = true },
     },
@@ -31,40 +31,18 @@ return {
             },
             views = {
                 cmdline_popup = {
-                    position = {
-                        row = 5,
-                        col = "50%",
-                    },
-                    size = {
-                        width = 60,
-                        height = "auto",
-                    },
+                    position = { row = 5, col = "50%" },
+                    size = { width = 60, height = "auto" },
                 },
                 popupmenu = {
                     relative = "editor",
-                    position = {
-                        row = 8,
-                        col = "50%",
-                    },
-                    size = {
-                        width = 60,
-                        height = 10,
-                    },
-                    border = {
-                        style = "rounded",
-                        padding = { 0, 1 },
-                    },
-                    win_options = {
-                        winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
-                    },
+                    position = { row = 8, col = "50%" },
+                    size = { width = 60, height = 10 },
+                    border = { style = "rounded", padding = { 0, 1 } },
+                    win_options = { winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" } },
                 },
             },
-            routes = {
-                {
-                    view = "notify",
-                    filter = { event = "msg_showmode" },
-                },
-            },
+            routes = { { view = "notify", filter = { event = "msg_showmode" } } },
         },
     },
     {
@@ -82,9 +60,7 @@ return {
                 lualine_c = {},
                 lualine_x = {},
                 lualine_y = { "filetype", "progress" },
-                lualine_z = {
-                    { "location", left_padding = 2 },
-                },
+                lualine_z = { { "location", left_padding = 2 } },
             },
             inactive_sections = {
                 lualine_a = {},
@@ -100,6 +76,7 @@ return {
     },
     {
         "goolord/alpha-nvim",
+        lazy = false,
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
             require("alpha").setup(require("alpha.themes.dashboard").config)
@@ -116,11 +93,7 @@ return {
                 end,
                 desc = "Dismiss All Notifications",
             },
-            {
-                "<leader>nh",
-                "<cmd>Telescope notify<cr>",
-                desc = "Notification History",
-            },
+            { "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
         },
         opts = {
             stages = "slide",
@@ -142,12 +115,13 @@ return {
     {
         "akinsho/bufferline.nvim",
         version = false,
-        enabled = false,
+        enabled = false, -- TODO: Disable until I find out if I still need with coq setup
         dependencies = "nvim-tree/nvim-web-devicons",
         opts = {
             options = {
                 diagnostics = "nvim_lsp",
-                diagnostics_indicator = function(count, level, diagnostics_dict, context) --- @diagnostic disable-line: unused-local
+                --- @diagnostic disable-next-line: unused-local
+                diagnostics_indicator = function(count, level, diagnostics_dict, context)
                     local s = " "
                     for e, n in pairs(diagnostics_dict) do
                         local sym = e == "error" and " " or (e == "warning" and " " or "")
@@ -158,5 +132,5 @@ return {
             },
         },
     },
-    
+
 }

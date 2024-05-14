@@ -1,6 +1,6 @@
 return {
 	"ziontee113/icon-picker.nvim",
-	event = "BufEnter",
+	event = "VeryLazy",
 	keys = {
 		{ "<leader>if", "<cmd>IconPickerNormal<cr>", desc = "Find Icon" },
 		{ "<leader>iy", "<cmd>IconPickerYank<cr>", desc = "Yank Icon" },

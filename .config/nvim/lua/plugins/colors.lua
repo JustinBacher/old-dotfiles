@@ -1,5 +1,6 @@
 return {
 	-- Themes
+	-- TODO: Figure out if I can turn lazy to true for all but current theme
 	{
 		"Mofiqul/dracula.nvim",
 		lazy = false,
@@ -38,12 +39,6 @@ return {
 	-- Themery - Theme Picker
 	{
 		"zaldih/themery.nvim",
-		themes = {
-			"dracula",
-			"tokyonight",
-			"catppuccin",
-			"rose-pine",
-		},
 		cmd = "Themery",
 		config = function()
 			local status_ok, themery = pcall(require, "themery")

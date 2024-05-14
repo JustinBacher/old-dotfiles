@@ -14,13 +14,8 @@ vim.opt.rtp:prepend(lazypath)
 require("config.lazyfile").setup()
 
 require("lazy").setup({
-	spec = {
-		{ import = "plugins" },
-	},
-	defaults = {
-		lazy = false,
-		version = "*", -- try installing the latest stable version for plugins that support semver
-	},
+	spec = { { import = "plugins" } },
+	defaults = { lazy = true, version = "*" },
 	checker = { enabled = true },
 	performance = {
 		rtp = {
@@ -37,16 +32,3 @@ require("lazy").setup({
 		},
 	},
 })
-
-require("config.theme")
-require("config.autocmds")
-
-local remaps = require("config.remaps")
-for _, remap in ipairs(remaps) do
-	local bind = table.remove(remap, 1)
-	local result = table.remove(remap, 1)
-	local mode = remap.mode or "n"
-	remap.mode = nil
-
-	vim.keymap.set(mode, bind, result, remap)
-end
