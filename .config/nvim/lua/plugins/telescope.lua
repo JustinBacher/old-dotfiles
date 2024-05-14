@@ -9,9 +9,7 @@ return {
 		{
 			"<leader>ff",
 			function()
-				local builtin = require("telescope.builtin")
-				local utils = require("telescope.utils")
-				builtin.find_files({ cwd = utils.buffer_dir() })
+				require("telescope.builtin").find_files({ cwd = require("telescope.utils").buffer_dir() })
 			end,
 			desc = "Find Files (cwd)",
 		},

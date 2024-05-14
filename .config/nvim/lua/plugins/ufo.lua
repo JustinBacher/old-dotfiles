@@ -2,8 +2,8 @@ return {
 	"kevinhwang91/nvim-ufo",
 	dependencies = { "kevinhwang91/promise-async" },
 	init = function()
-		vim.o.foldcolumn = "1" -- '0' is not bad
-		vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+		vim.o.foldcolumn = "1"
+		vim.o.foldlevel = 99
 		vim.o.foldlevelstart = 99
 		vim.o.foldenable = true
 	end,
@@ -13,8 +13,7 @@ return {
 		{
 			"zK",
 			function()
-				local winid = require("ufo").peekFoldedLinesUnderCursor()
-				if not winid then
+				if not require("ufo").peekFoldedLinesUnderCursor() then
 					vim.lsp.buf.hover()
 				end
 			end,

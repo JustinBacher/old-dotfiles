@@ -2,15 +2,13 @@ return {
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
-		opts = {},
+		config = true,
 		keys = {
 			{
 				"s",
 				mode = { "n", "x", "o" },
 				function()
-					require("flash").jump({
-						search = { forward = true, wrap = true },
-					})
+					require("flash").jump({ search = { forward = true, wrap = true } })
 				end,
 				desc = "Flash",
 			},
@@ -18,9 +16,7 @@ return {
 				"S",
 				mode = { "n", "x", "o" },
 				function()
-					require("flash").jump({
-						pattern = vim.fn.expand("<cword>"),
-					})
+					require("flash").jump({ pattern = vim.fn.expand("<cword>") })
 				end,
 				desc = "Search using word under cursor",
 			},
