@@ -1,11 +1,12 @@
 return {
-	{ "echasnovski/mini.cursorword", version = false, config = true },
-	{ "echasnovski/mini.ai", version = false, config = true },
-	{ "echasnovski/mini.pairs", version = false, config = true },
-	{ "echasnovski/mini.indentscope", version = false, opts = { symbol = "▒" } },
+	{ "echasnovski/mini.cursorword", event = "VeryLazy", version = false, config = true },
+	{ "echasnovski/mini.ai", event = "VeryLazy", version = false, config = true },
+	{ "echasnovski/mini.pairs", event = "VeryLazy", version = false, config = true },
+	{ "echasnovski/mini.indentscope", event = "VeryLazy", version = false, opts = { symbol = "▒" } },
 	{
 		"echasnovski/mini.map",
 		version = false,
+		event = "VeryLazy",
 		keys = {
 			{ "<leader>mm", "lua MiniMap.toggle()<cr>", desc = "Toggle MiniMap" },
 		},
@@ -58,21 +59,21 @@ return {
 	},
 	{
 		"echasnovski/mini.surround",
-		config = function()
-			require("mini.surround").setup({
-				mappings = {
-					add = "<leader>sa", -- Add surrounding in Normal and Visual modes
-					delete = "<leader>sd", -- Delete surrounding
-					find = "<leader>sf", -- Find surrounding (to the right)
-					find_left = "<leader>sF", -- Find surrounding (to the left)
-					highlight = "<leader>sh", -- Highlight surrounding
-					replace = "<leader>sr", -- Replace surrounding
-					update_n_lines = "<leader>sn", -- Update `n_lines`
-				},
-				custom_surroundings = {
-					["<"] = { output = { left = "<", right = ">" } },
-				},
-			})
-		end,
+		event = "VeryLazy",
+		version = false,
+		opts = {
+			mappings = {
+				add = "<leader>sa", -- Add surrounding in Normal and Visual modes
+				delete = "<leader>sd", -- Delete surrounding
+				find = "<leader>sf", -- Find surrounding (to the right)
+				find_left = "<leader>sF", -- Find surrounding (to the left)
+				highlight = "<leader>sh", -- Highlight surrounding
+				replace = "<leader>sr", -- Replace surrounding
+				update_n_lines = "<leader>sn", -- Update `n_lines`
+			},
+			custom_surroundings = {
+				["<"] = { output = { left = "<", right = ">" } },
+			},
+		}
 	},
 }
