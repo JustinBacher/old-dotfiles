@@ -20,12 +20,7 @@ return {
 		config = function()
 			local cmp = require("cmp")
 			local cmp_lsp = require("cmp_nvim_lsp")
-			local capabilities = vim.tbl_deep_extend(
-				"force",
-				{},
-				vim.lsp.protocol.make_client_capabilities(),
-				cmp_lsp.default_capabilities()
-			)
+			local capabilities = vim.tbl_deep_extend("force", {}, vim.lsp.protocol.make_client_capabilities(), cmp_lsp.default_capabilities())
 
 			require("fidget").setup({})
 			require("mason").setup()
@@ -40,8 +35,7 @@ return {
 						require("lspconfig")[server_name].setup({ capabilities = capabilities })
 					end,
 					lua_ls = function()
-						local lspconfig = require("lspconfig")
-						lspconfig.lua_ls.setup({
+						require("lspconfig").lua_ls.setup({
 							capabilities = capabilities,
 							settings = {
 								Lua = {
@@ -67,18 +61,14 @@ return {
 			cmp.setup.cmdline(":", {
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
-				  matching = { disallow_symbol_nonprefix_matching = false }
+				matching = { disallow_symbol_nonprefix_matching = false }
 			})
 
 			local luasnip = require("luasnip")
 			local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
 			cmp.setup({
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
+				snippet = {expand = function(args) luasnip.lsp_expand(args.body) end },
 				mapping = cmp.mapping.preset.insert({
 					["<tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
@@ -120,12 +110,10 @@ return {
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
 					format = function(entry, vim_item)
-						local kind =
-							require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
+						local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
 						local strings = vim.split(kind.kind, "%s", { trimempty = true })
 						kind.kind = " " .. (strings[1] or "") .. " "
 						kind.menu = "    (" .. (strings[2] or "") .. ")"
-
 						return kind
 					end,
 				},
