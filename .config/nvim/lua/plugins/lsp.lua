@@ -84,7 +84,7 @@ return {
 	{
 	  'kevinhwang91/nvim-ufo',
 	  dependencies = { 'kevinhwang91/promise-async' },
-	  event = "BufRead",
+	  event = "LazyFile",
 	  init = function()
 		vim.o.foldlevel = 99
 		vim.o.foldlevelstart = 99
@@ -93,8 +93,21 @@ return {
 	  keys = {
 		  { 'zR', function() require('ufo').openAllFolds() end,  desc = 'Open all folds' },
 		  { 'zM', function() require('ufo').closeAllFolds() end, desc = 'Close all folds' },
+		  {
+			"zK",
+			function()
+				if not require("ufo").peekFoldedLinesUnderCursor() then
+					vim.lsp.buf.hover()
+				end
+			end,
+			desc = "Peek Fold",
 		},
-		config = true,
+		},
+		opts = {
+			provider_selector = function(bufnr, filetype, buftype) ---@diagnostic disable-line: unused-local
+				return { "lsp", "indent" }
+			end,
+		},
 	},
 	-- Completion
 	{
