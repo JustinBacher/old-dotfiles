@@ -1,34 +1,13 @@
 return {
-	{
-		"echasnovski/mini.ai",
-		version = false,
-		config = function()
-			require("mini.ai").setup()
-		end,
-	},
-	{
-		"echasnovski/mini.pairs",
-		version = false,
-		config = function()
-			require("mini.pairs").setup()
-		end,
-	},
-	{
-		"echasnovski/mini.indentscope",
-		version = false,
-		opts = { symbol = "▒" },
-	},
+	{ "echasnovski/mini.cursorword", version = false, config = true },
+	{ "echasnovski/mini.ai", version = false, config = true },
+	{ "echasnovski/mini.pairs", version = false, config = true },
+	{ "echasnovski/mini.indentscope", version = false, opts = { symbol = "▒" } },
 	{
 		"echasnovski/mini.map",
 		version = false,
 		keys = {
-			{
-				"<leader>mm",
-				function()
-					require("mini.map").toggle()
-				end,
-				desc = "Toggle MiniMap",
-			},
+			{ "<leader>mm", "lua MiniMap.toggle()<cr>", desc = "Toggle MiniMap" },
 		},
 		config = function()
 			local map = require("mini.map")
@@ -46,10 +25,8 @@ return {
 		event = "VeryLazy",
 		version = false,
 		config = function()
-			local animate = require("mini.animate")
-
 			local mouse_scrolled = false
-			for _, scroll in ipairs({ "Up", "Down" }) do
+			for _, scroll in pairs({ "Up", "Down" }) do
 				local key = "<ScrollWheel" .. scroll .. ">"
 				vim.keymap.set({ "", "i" }, key, function()
 					mouse_scrolled = true
@@ -57,6 +34,7 @@ return {
 				end, { expr = true })
 			end
 
+			local animate = require("mini.animate")
 			animate.setup({
 				cursor = {
 					timing = animate.gen_timing.exponential({ duration = 200, unit = "total" }),
