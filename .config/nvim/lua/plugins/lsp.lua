@@ -1,216 +1,260 @@
 return {
 	{
-		"neovim/nvim-lspconfig",
-		lazy = true,
-		event = { "BufEnter", "CmdlineEnter", "InsertEnter" },
-		dependencies = {
-			{ "williamboman/mason.nvim", lazy = true},
-			{ "williamboman/mason-lspconfig.nvim", lazy = true},
-			{ "hrsh7th/cmp-nvim-lsp", lazy = true},
-			{ "hrsh7th/cmp-buffer", lazy = true},
-			{ "hrsh7th/cmp-path", lazy = true},
-			{ "hrsh7th/cmp-cmdline", lazy = true},
-			{ "hrsh7th/nvim-cmp", lazy = true},
-			{ "cmp-nvim-lsp-signature-help", lazy = true},
-			{ "L3MON4D3/LuaSnip", lazy = true},
-			{ "saadparwaiz1/cmp_luasnip", lazy = true},
-			{ "j-hui/fidget.nvim", lazy = true},
-			{ "onsails/lspkind.nvim", lazy = true},
-		},
-		config = function()
-			local cmp = require("cmp")
-			local cmp_lsp = require("cmp_nvim_lsp")
-			local capabilities = vim.tbl_deep_extend("force", {}, vim.lsp.protocol.make_client_capabilities(), cmp_lsp.default_capabilities())
-
-			require("fidget").setup({})
-			require("mason").setup()
-			require("mason-lspconfig").setup({
-				automatic_installation = true,
-				ensure_installed = {
-					"lua_ls",
-					"rust_analyzer",
-				},
-				handlers = {
-					function(server_name)
-						require("lspconfig")[server_name].setup({ capabilities = capabilities })
-					end,
-					lua_ls = function()
-						require("lspconfig").lua_ls.setup({
-							capabilities = capabilities,
-							settings = {
-								Lua = {
-									runtime = { version = "Lua 5.1" },
-									diagnostics = { globals = { "vim", "it", "describe", "before_each", "after_each" } },
-								},
-							},
-						})
-					end,
-				},
-			})
-			
-			local get_bufnrs =  function()
-				return vim.api.nvim_list_bufs()
-			end
-			-- `/` cmdline setup.
-			cmp.setup.cmdline("/", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = { { name = "buffer", get_bufnrs = get_bufnrs } },
-			})
-
-			-- `:` cmdline setup.
-			cmp.setup.cmdline(":", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = cmp.config.sources({ { name = 'path' } }, { { name = 'cmdline' } }),
-				matching = { disallow_symbol_nonprefix_matching = false }
-			})
-
-			local luasnip = require("luasnip")
-			local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
-			cmp.setup({
-				snippet = {expand = function(args) luasnip.lsp_expand(args.body) end },
-				mapping = cmp.mapping.preset.insert({
-					["<tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.mapping.select_prev_item(cmp_select),
-						elseif luasnip.locally_jumpable(1) then
-							luasnip.jump(1)
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<S-tab>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							cmp.mapping.select_next_item(cmp_select),
-						elseif luasnip.locally_jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end, { "i", "s" }),
-					["<cr>"] = cmp.mapping(function(fallback)
-						if cmp.visible() then
-							if luasnip.expandable() then
-								luasnip.expand()
-							else
-								cmp.confirm({ select = true })
-							end
-						else
-							fallback()
-						end
-					end),
-				}),
-				window = {
-					completion = {
-						winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,Search:None",
-						col_offset = -3,
-						side_padding = 0,
-					},
-				},
-				formatting = {
-					fields = { "kind", "abbr", "menu" },
-					format = function(entry, vim_item)
-						local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
-						local strings = vim.split(kind.kind, "%s", { trimempty = true })
-						kind.kind = " " .. (strings[1] or "") .. " "
-						kind.menu = "    (" .. (strings[2] or "") .. ")"
-						return kind
-					end,
-				},
-				sources = cmp.config.sources({
-					{ name = "nvim_lsp" },
-					{ name = 'nvim_lsp_signature_help' }
-					{ name = "luasnip", keyword_length = 2 },
-					{ name = "buffer", keyword_length = 3, get_bufnrs = get_bufnrs },
-					{ name = "path" },
-				})
-
-				vim.diagnostic.config({
-					update_in_insert = true,
-					severity_sort = true,
-					float = {
-						focusable = false,
-						style = "minimal",
-						border = "rounded",
-						source = "always",
-						header = "",
-						prefix = "",
-					},
-				})
-			end,
-		build = function()
-			local hl = vim.api.nvim_set_hl
-			hl(0, "PmenuSel", { bg = "#282C34", fg = "NONE" })
-			hl(0, "Pmenu", { fg = "#C5CDD9", bg = "#22252A" })
-
-			hl(0, "CmpItemAbbrDeprecated", { fg = "#7E8294", bg = "NONE", strikethrough = true })
-			hl(0, "CmpItemAbbrMatch", { fg = "#82AAFF", bg = "NONE", bold = true })
-			hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#82AAFF", bg = "NONE", bold = true })
-			hl(0, "CmpItemMenu", { fg = "#C792EA", bg = "NONE", italic = true })
-
-			hl(0, "CmpItemKindField", { fg = "#EED8DA", bg = "#B5585F" })
-			hl(0, "CmpItemKindProperty", { fg = "#EED8DA", bg = "#B5585F" })
-			hl(0, "CmpItemKindEvent", { fg = "#EED8DA", bg = "#B5585F" })
-
-			hl(0, "CmpItemKindText", { fg = "#C3E88D", bg = "#9FBD73" })
-			hl(0, "CmpItemKindEnum", { fg = "#C3E88D", bg = "#9FBD73" })
-			hl(0, "CmpItemKindKeyword", { fg = "#C3E88D", bg = "#9FBD73" })
-
-			hl(0, "CmpItemKindConstant", { fg = "#FFE082", bg = "#D4BB6C" })
-			hl(0, "CmpItemKindConstructor", { fg = "#FFE082", bg = "#D4BB6C" })
-			hl(0, "CmpItemKindReference", { fg = "#FFE082", bg = "#D4BB6C" })
-
-			hl(0, "CmpItemKindFunction", { fg = "#EADFF0", bg = "#A377BF" })
-			hl(0, "CmpItemKindStruct", { fg = "#EADFF0", bg = "#A377BF" })
-			hl(0, "CmpItemKindClass", { fg = "#EADFF0", bg = "#A377BF" })
-			hl(0, "CmpItemKindModule", { fg = "#EADFF0", bg = "#A377BF" })
-			hl(0, "CmpItemKindOperator", { fg = "#EADFF0", bg = "#A377BF" })
-
-			hl(0, "CmpItemKindVariable", { fg = "#C5CDD9", bg = "#7E8294" })
-			hl(0, "CmpItemKindFile", { fg = "#C5CDD9", bg = "#7E8294" })
-
-			hl(0, "CmpItemKindUnit", { fg = "#F5EBD9", bg = "#D4A959" })
-			hl(0, "CmpItemKindSnippet", { fg = "#F5EBD9", bg = "#D4A959" })
-			hl(0, "CmpItemKindFolder", { fg = "#F5EBD9", bg = "#D4A959" })
-
-			hl(0, "CmpItemKindMethod", { fg = "#DDE5F5", bg = "#6C8ED4" })
-			hl(0, "CmpItemKindValue", { fg = "#DDE5F5", bg = "#6C8ED4" })
-			hl(0, "CmpItemKindEnumMember", { fg = "#DDE5F5", bg = "#6C8ED4" })
-
-			hl(0, "CmpItemKindInterface", { fg = "#D8EEEB", bg = "#58B5A8" })
-			hl(0, "CmpItemKindColor", { fg = "#D8EEEB", bg = "#58B5A8" })
-			hl(0, "CmpItemKindTypeParameter", { fg = "#D8EEEB", bg = "#58B5A8" })
-		end,
-	},
-	{
-		"L3MON4D3/LuaSnip",
-		lazy = true,
-		version = "v2.*",
-		build = "make install_jsregexp",
-		dependencies = { "rafamadriz/friendly-snippets" },
-		config = function()
-			local ls = require("luasnip")
-			ls.filetype_extend("javascript", { "jsdoc" })
-		end,
-	},
-	{
-		"Bekaboo/dropbar.nvim",
-		lazy = true,
-		branch = "feat-winbar-background-highlight",
-		dependencies = {
-			"nvim-telescope/telescope-fzf-native.nvim",
-		},
-	},
-	{
-		"hedyhli/outline.nvim",
-		lazy = true,
-		cmd = { "Outline", "OutlineOpen" },
-		keys = {
-		  { "<C-P>", "<cmd>Outline<cr>", desc = "Toggle outline" },
-		},
-		opts = {
-			auto_close = true,
-			auto_jump = true,
+	  'neovim/nvim-lspconfig',
+	  dependencies = {
+		'ms-jpq/coq_nvim',
+		'folke/neodev.nvim',
+		"j-hui/fidget.nvim"
+	  },
+	  event = "LazyFile",
+	  opts = {
+		servers = {
+		  rust_analyzer = {
+			settings = {
+			  ['rust-analyzer'] = { checkOnSave = { command = 'clippy' } }
+			},
+		  },
+		  lua_ls = function()
+			require('neodev').setup({})
+			return {}
+		  end,
+		}
+	  },
+	  init = function()
+		vim.diagnostic.config({
+		  virtual_text = { source = "if_many" },
+		  severity_sort = true,
+		})
+  
+		local signs = { Error = "󰅚 ", Warn = " ", Hint = "󰌶 ", Info = " " }
+		for type, icon in pairs(signs) do
+		  local hl = "DiagnosticSign" .. type
+		  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+		end
+	  end,
+	  config = function(_, opts)
+		local setup_server = function(server_name)
+		  local config = opts.servers[server_name] or {}
+		  if type(config) == "function" then
+			config = config() or {}
+		  end
+		  config.capabilities = vim.lsp.protocol.make_client_capabilities()
+		  config.capabilities.textDocument.foldingRange = {
+			dynamicRegistration = false,
+			lineFoldingOnly = true
+		  }
+		  config = require('coq').lsp_ensure_capabilities(config)
+		  require('lspconfig')[server_name].setup(config)
+		end
+		require('mason-lspconfig').setup_handlers({ setup_server })
+  
+		setup_server("nil_ls")
+	  end,
+	  keys = {
+		{
+		  '<leader>h',
+		  function()
+			vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({}))
+		  end,
+		  desc = "Toggle inlay hints"
 		},
 	  },
-}
+	},
+	{
+	  'stevearc/conform.nvim',
+	  cmd = { 'ConformInfo' },
+	  opts = {
+		formatters_by_ft = {
+		  nix = { 'alejandra' },
+		  python = { 'isort', 'black' },
+		  cpp = { 'astyle' },
+		}
+	  },
+	  keys = {
+		{
+		  '<leader>bf',
+		  function()
+			require('conform').format({ async = true, lsp_fallback = true })
+		  end,
+		  desc = "Format buffer",
+		  mode = { 'n', 'v' }
+		},
+	  }
+	},
+	{
+	  'kevinhwang91/nvim-ufo',
+	  dependencies = { 'kevinhwang91/promise-async' },
+	  event = "BufRead",
+	  init = function()
+		vim.o.foldlevel = 99
+		vim.o.foldlevelstart = 99
+		vim.o.foldenable = true
+	  end,
+	  keys = {
+		  { 'zR', function() require('ufo').openAllFolds() end,  desc = 'Open all folds' },
+		  { 'zM', function() require('ufo').closeAllFolds() end, desc = 'Close all folds' },
+		},
+		config = true,
+	},
+	-- Completion
+	{
+	  'ms-jpq/coq_nvim',
+	  dependencies = {
+		'ms-jpq/coq.artifacts',
+		'ms-jpq/coq.thirdparty',
+	  },
+	  init = function()
+		vim.g.coq_settings = {
+		  auto_start = 'shut-up',
+		  clients = {
+			buffers = { enabled = false },
+			paths = { preview_lines = 3 }
+		  },
+		  display = {
+			icons = { mode = 'short' },
+			ghost_text = { context = { " ⟨ ", " ⟩" } },
+		  },
+		  keymap = {
+			recommended = false,
+			jump_to_mark = '<c-n>',
+			pre_select = true
+		  },
+		}
+	  end,
+	  keys = {
+		{
+		  '<esc>',
+		  function() return vim.fn.pumvisible() == 1 and "<c-e><esc>" or "<esc>" end,
+		  desc = "Map popup escape",
+		  mode = { 'i' },
+		  expr = true
+		},
+		{
+		  '<c-c>',
+		  function() return vim.fn.pumvisible() == 1 and "<c-e><c-c>" or "<c-c>" end,
+		  desc = "Map popup Ctrl C",
+		  mode = { 'i' },
+		  expr = true
+		},
+		{
+		  '<tab>',
+		  function() return vim.fn.pumvisible() == 1 and "<c-n>" or "<tab>" end,
+		  desc = "Map popup tab",
+		  mode = { 'i' },
+		  expr = true
+		},
+		{
+		  '<s-tab>',
+		  function() return vim.fn.pumvisible() == 1 and "<c-p>" or "<bs>" end,
+		  desc = "Map popup shift tab",
+		  mode = { 'i' },
+		  expr = true
+		},
+	  }
+	},
+	{
+	  'ms-jpq/coq.thirdparty',
+	  dependencies = {
+		'github/copilot.vim',
+	  },
+	  config = function()
+		require('coq_3p') {
+		  { src = 'copilot', short_name = 'COP', accept_key = '<c-f>' },
+		  { src = "dap" }
+		}
+	  end
+	},
+	-- UI
+	{
+		"j-hui/fidget.nvim"
+		config = true,
+	},
+	{
+	  'glepnir/lspsaga.nvim',
+	  dependencies = { 'nvim-tree/nvim-web-devicons' },
+	  event = 'LazyFile',
+	  opts = {
+		implement = {
+		  enable = true,
+		  lang = { 'rust' }
+		},
+		lightbulb = {
+		  sign = false,
+		},
+		code_action = {
+		  extend_gitsigns = true,
+		},
+	  },
+	  keys = {
+		{ 'ga', "<cmd>Lspsaga finder<cr>", desc = 'Open symbol finder' },
+		{ 'ghi', "<cmd>Lspsaga finder imp<cr>", desc = 'Find all implementations' },
+		{ 'ghr', "<cmd>Lspsaga finder ref<cr>", desc = 'Find all references' },
+		{ 'ghd', "<cmd>Lspsaga finder def<cr>", desc = 'Find all definitions' },
+		{ 'gr', "<cmd>Lspsaga rename<cr>", desc = 'Rename symbol' },
+		{ 'gR', "<cmd>Lspsaga rename ++project<cr>", desc = 'Rename symbol (project)' },
+		{ 'gd', "<cmd>Lspsaga peek_definition<cr>",  desc = 'Peek definition' },
+		{ 'gD', "<cmd>Lspsaga goto_definition<cr>",  desc = 'Goto definition' },
+		{ 'gt', "<cmd>Lspsaga peek_type_definition<cr>", desc = 'Peek type definition' },
+		{ 'gT', "<cmd>Lspsaga goto_type_definition<cr>", desc = 'Goto type definition' },
+		{ '<leader>sl', "<cmd>Lspsaga show_line_diagnostics ++unfocus<cr>", desc = 'Show line diagnostics' },
+		{ '<leader>sc', "<cmd>Lspsaga show_cursor_diagnostics<cr>", desc = 'Show cursor diagnostics' },
+		{ '<leader>sb', "<cmd>Lspsaga show_buf_diagnostics<cr>", desc = 'Show buffer diagnostics' },
+		{ '<leader>sw', "<cmd>TroubleToggle<cr>", desc = 'Show workspace diagnostics' },
+		{ '[d', "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = 'Jump to previous diagnostic' },
+		{ ']d', "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = 'Jump to next diagnostic' },
+		{ 'go', "<cmd>Lspsaga outline<cr>",   desc = 'Show outline' },
+		{
+		  'K',
+		  function()
+			if require('dap').session() then
+			  require("dapui").eval()
+			else
+			  require("lspsaga.hover"):render_hover_doc()
+			end
+		  end,
+		  desc = "Show symbol information",
+		  mode = { 'n', 'v' }
+		},
+		{
+		  '[e',
+		  function()
+			require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity.ERROR })
+		  end,
+		  desc = 'Jump to previous error'
+		},
+		{
+		  ']e',
+		  function()
+			require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity.ERROR })
+		  end,
+		  desc = 'Jump to next error'
+		},
+		{
+		  '[w',
+		  function()
+			require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity.WARN })
+		  end,
+		  desc = 'Jump to previous warning'
+		},
+		{
+		  ']w',
+		  function()
+			require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity.WARN })
+		  end,
+		  desc = 'Jump to next warning'
+		},
+		{
+		  '<A-d>',
+		  "<cmd>Lspsaga term_toggle<cr>",
+		  desc = 'Toggle floating terminal',
+		  mode = { 'n', 't' }
+		},
+		{
+		  '<leader>a',
+		  "<cmd>Lspsaga code_action<cr>",
+		  desc = 'Show code actions',
+		  mode = { 'n', 'v' }
+		},
+	  },
+	},
+  }
