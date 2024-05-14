@@ -1,7 +1,7 @@
 return {
 	{
 		"nvim-telescope/telescope.nvim",
-		dependencies = {}
+		dependencies = { "nvim-telescope/telescope-media-files.nvim" }
 		opts = {},
 		keys = {
 			{ "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
@@ -22,12 +22,12 @@ return {
 	},
 	{
 		"nvim-telescope/telescope-media-files.nvim",
+		lazy = true,
 		dependencies = {
 			"nvim-lua/popup.nvim",
 			"nvim-lua/plenary.nvim",
 			"nvim-telescope/telescope.nvim",
 		},
-		lazy = true,
 		opts = {
 			extensions = {
 				media_files = {
