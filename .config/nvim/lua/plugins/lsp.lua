@@ -1,7 +1,8 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
-		event = "VeryLazy",
+		lazy = true,
+		event = { "BufEnter", "CmdlineEnter", "InsertEnter" },
 		dependencies = {
 			{ "williamboman/mason.nvim", lazy = true},
 			{ "williamboman/mason-lspconfig.nvim", lazy = true},
