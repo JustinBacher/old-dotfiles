@@ -7,7 +7,19 @@ return {
 		priority = 1000,
 		opts = { transparent_bg = true, italic_comment = true },
 	},
-	{ "folke/tokyonight.nvim", lazy = false, name = "tokyonight", priority = 1000, opts = { transparent = true } },
+	{
+		"folke/tokyonight.nvim",
+		lazy = false,
+		name = "tokyonight",
+		priority = 1000,
+		opts = {
+			transparent = true,
+			on_highlights = function(hl, c) --- @diagnostic disable-line: unused-local
+				hl.MiniCursorword = { underline = true }
+				hl.MiniCursorwordCurrent = { underline = true }
+			end,
+		},
+	},
 	{
 		"catppuccin/nvim",
 		lazy = false,
@@ -20,7 +32,7 @@ return {
 		lazy = false,
 		name = "rose-pine",
 		priority = 1000,
-		opts = { extend_background_behind_borders = true },
+		opts = { extend_background_behind_borders = false, styles = { transparency = true } },
 	},
 
 	-- Themery - Theme Picker
