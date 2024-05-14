@@ -1,176 +1,230 @@
 return {
-	"VonHeikemen/lsp-zero.nvim",
-	branch = "v3.x",
-	dependencies = {
-		-- LSP Support
-		{
-			"neovim/nvim-lspconfig",
-			dependencies = {
-				{
-					"SmiteshP/nvim-navbuddy",
-					dependencies = {
-						"SmiteshP/nvim-navic",
-						"MunifTanjim/nui.nvim",
+	{
+		"neovim/nvim-lspconfig",
+		dependencies = {
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
+			"hrsh7th/nvim-cmp",
+			"L3MON4D3/LuaSnip",
+			"saadparwaiz1/cmp_luasnip",
+			"j-hui/fidget.nvim",
+			"onsails/lspkind.nvim",
+		},
+		config = function()
+			local cmp = require("cmp")
+			local cmp_lsp = require("cmp_nvim_lsp")
+			local capabilities = vim.tbl_deep_extend(
+				"force",
+				{},
+				vim.lsp.protocol.make_client_capabilities(),
+				cmp_lsp.default_capabilities()
+			)
+
+			require("fidget").setup({})
+			require("mason").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"lua_ls",
+					"rust_analyzer",
+					"gopls",
+				},
+				handlers = {
+					function(server_name) -- default handler (optional)
+						require("lspconfig")[server_name].setup({
+							capabilities = capabilities,
+						})
+					end,
+
+					["lua_ls"] = function()
+						local lspconfig = require("lspconfig")
+						lspconfig.lua_ls.setup({
+							capabilities = capabilities,
+							settings = {
+								Lua = {
+									runtime = { version = "Lua 5.1" },
+									diagnostics = {
+										globals = { "vim", "it", "describe", "before_each", "after_each" },
+									},
+								},
+							},
+						})
+					end,
+				},
+			})
+
+			-- `/` cmdline setup.
+			cmp.setup.cmdline("/", {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = {
+					{
+						name = "buffer",
+						get_bufnrs = function()
+							return vim.api.nvim_list_bufs()
+						end,
 					},
-					opts = {
-						lsp = { auto_attach = true },
-						window = {
-							border = "rounded",
+				},
+			})
+
+			-- `:` cmdline setup.
+			cmp.setup.cmdline(":", {
+				mapping = cmp.mapping.preset.cmdline(),
+				sources = cmp.config.sources({
+					{ name = "path" },
+				}, {
+					{
+						name = "cmdline",
+						option = {
+							ignore_cmds = { "Man", "!" },
 						},
 					},
-					keys = {
-						{ "<leader>p", "<cmd>Navbuddy<CR>", desc = "Show Breadcrumbs" },
+				}),
+			})
+
+			local luasnip = require("luasnip")
+
+			cmp.setup({
+				snippet = {
+					expand = function(args)
+						luasnip.lsp_expand(args.body) -- For `luasnip` users.
+					end,
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<cr>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_next_item()
+						elseif luasnip.locally_jumpable(1) then
+							luasnip.jump(1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<S-cr>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.select_prev_item()
+						elseif luasnip.locally_jumpable(-1) then
+							luasnip.jump(-1)
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+					["<tab>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							if luasnip.expandable() then
+								luasnip.expand()
+							else
+								cmp.confirm({
+									select = true,
+								})
+							end
+						else
+							fallback()
+						end
+					end),
+				}),
+				window = {
+					completion = {
+						winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,Search:None",
+						col_offset = -3,
+						side_padding = 0,
 					},
 				},
-			},
-		},
-		{ -- Optional
-			"williamboman/mason.nvim",
-			build = function()
-				pcall(vim.cmd, "MasonUpdate")
-			end,
-		},
-		{ "williamboman/mason-lspconfig.nvim" }, -- Optional
+				formatting = {
+					fields = { "kind", "abbr", "menu" },
+					format = function(entry, vim_item)
+						local kind =
+							require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
+						local strings = vim.split(kind.kind, "%s", { trimempty = true })
+						kind.kind = " " .. (strings[1] or "") .. " "
+						kind.menu = "    (" .. (strings[2] or "") .. ")"
 
-		-- Autocompletion
-		{ "hrsh7th/nvim-cmp" }, -- Required
-		{ "hrsh7th/cmp-nvim-lsp" }, -- Required
-		{ "L3MON4D3/LuaSnip" }, -- Required
-		{ "rafamadriz/friendly-snippets" },
-		{ "hrsh7th/cmp-buffer" },
-		{ "hrsh7th/cmp-path" },
-		{ "hrsh7th/cmp-cmdline" },
-		{ "saadparwaiz1/cmp_luasnip" },
+						vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#282C34", fg = "NONE" })
+						vim.api.nvim_set_hl(0, "Pmenu", { fg = "#C5CDD9", bg = "#22252A" })
+
+						vim.api.nvim_set_hl(
+							0,
+							"CmpItemAbbrDeprecated",
+							{ fg = "#7E8294", bg = "NONE", strikethrough = true }
+						)
+						vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { fg = "#82AAFF", bg = "NONE", bold = true })
+						vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#82AAFF", bg = "NONE", bold = true })
+						vim.api.nvim_set_hl(0, "CmpItemMenu", { fg = "#C792EA", bg = "NONE", italic = true })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindField", { fg = "#EED8DA", bg = "#B5585F" })
+						vim.api.nvim_set_hl(0, "CmpItemKindProperty", { fg = "#EED8DA", bg = "#B5585F" })
+						vim.api.nvim_set_hl(0, "CmpItemKindEvent", { fg = "#EED8DA", bg = "#B5585F" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindText", { fg = "#C3E88D", bg = "#9FBD73" })
+						vim.api.nvim_set_hl(0, "CmpItemKindEnum", { fg = "#C3E88D", bg = "#9FBD73" })
+						vim.api.nvim_set_hl(0, "CmpItemKindKeyword", { fg = "#C3E88D", bg = "#9FBD73" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindConstant", { fg = "#FFE082", bg = "#D4BB6C" })
+						vim.api.nvim_set_hl(0, "CmpItemKindConstructor", { fg = "#FFE082", bg = "#D4BB6C" })
+						vim.api.nvim_set_hl(0, "CmpItemKindReference", { fg = "#FFE082", bg = "#D4BB6C" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindFunction", { fg = "#EADFF0", bg = "#A377BF" })
+						vim.api.nvim_set_hl(0, "CmpItemKindStruct", { fg = "#EADFF0", bg = "#A377BF" })
+						vim.api.nvim_set_hl(0, "CmpItemKindClass", { fg = "#EADFF0", bg = "#A377BF" })
+						vim.api.nvim_set_hl(0, "CmpItemKindModule", { fg = "#EADFF0", bg = "#A377BF" })
+						vim.api.nvim_set_hl(0, "CmpItemKindOperator", { fg = "#EADFF0", bg = "#A377BF" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindVariable", { fg = "#C5CDD9", bg = "#7E8294" })
+						vim.api.nvim_set_hl(0, "CmpItemKindFile", { fg = "#C5CDD9", bg = "#7E8294" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindUnit", { fg = "#F5EBD9", bg = "#D4A959" })
+						vim.api.nvim_set_hl(0, "CmpItemKindSnippet", { fg = "#F5EBD9", bg = "#D4A959" })
+						vim.api.nvim_set_hl(0, "CmpItemKindFolder", { fg = "#F5EBD9", bg = "#D4A959" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindMethod", { fg = "#DDE5F5", bg = "#6C8ED4" })
+						vim.api.nvim_set_hl(0, "CmpItemKindValue", { fg = "#DDE5F5", bg = "#6C8ED4" })
+						vim.api.nvim_set_hl(0, "CmpItemKindEnumMember", { fg = "#DDE5F5", bg = "#6C8ED4" })
+
+						vim.api.nvim_set_hl(0, "CmpItemKindInterface", { fg = "#D8EEEB", bg = "#58B5A8" })
+						vim.api.nvim_set_hl(0, "CmpItemKindColor", { fg = "#D8EEEB", bg = "#58B5A8" })
+						vim.api.nvim_set_hl(0, "CmpItemKindTypeParameter", { fg = "#D8EEEB", bg = "#58B5A8" })
+						return kind
+					end,
+				},
+				sources = cmp.config.sources({
+					{ name = "nvim_lsp" },
+					{ name = "luasnip" },
+				}, {
+					{ name = "buffer" },
+				}),
+			})
+
+			vim.diagnostic.config({
+				update_in_insert = true,
+				severity_sort = true,
+				float = {
+					focusable = false,
+					style = "minimal",
+					border = "rounded",
+					source = "always",
+					header = "",
+					prefix = "",
+				},
+			})
+		end,
 	},
-	config = function()
-		local lsp = require("lsp-zero")
-
-		lsp.on_attach(function(client, bufnr)
-			local opts = { buffer = bufnr, remap = false }
-
-			vim.keymap.set("n", "gr", function()
-				vim.lsp.buf.references()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Goto Reference" }))
-			vim.keymap.set("n", "gd", function()
-				vim.lsp.buf.definition()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Goto Definition" }))
-			vim.keymap.set("n", "<leader>vws", function()
-				vim.lsp.buf.workspace_symbol()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Workspace Symbol" }))
-			vim.keymap.set("n", "<leader>vd", function()
-				vim.diagnostic.setloclist()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Show Diagnostics" }))
-			vim.keymap.set("n", "[d", function()
-				vim.diagnostic.goto_next()
-			end, vim.tbl_deep_extend("force", opts, { desc = "Next Diagnostic" }))
-			vim.keymap.set("n", "]d", function()
-				vim.diagnostic.goto_prev()
-			end, vim.tbl_deep_extend("force", opts, { desc = "Previous Diagnostic" }))
-			vim.keymap.set("n", "<leader>vca", function()
-				vim.lsp.buf.code_action()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Code Action" }))
-			vim.keymap.set("n", "<leader>vrr", function()
-				vim.lsp.buf.references()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP References" }))
-			vim.keymap.set("n", "<leader>vrn", function()
-				vim.lsp.buf.rename()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Rename" }))
-			vim.keymap.set("i", "<C-h>", function()
-				vim.lsp.buf.signature_help()
-			end, vim.tbl_deep_extend("force", opts, { desc = "LSP Signature Help" }))
-		end)
-
-		require("mason").setup({})
-		require("mason-lspconfig").setup({
-			ensure_installed = {
-				"tsserver",
-				"eslint",
-				"rust_analyzer",
-				"jdtls",
-				"lua_ls",
-				"jsonls",
-				"html",
-				"tailwindcss",
-				"tflint",
-				"pylsp",
-				"dockerls",
-				"bashls",
-				"marksman",
-			},
-			handlers = {
-				function(server_name)
-					require("lspconfig")[server_name].setup({})
-				end,
-				lua_ls = function()
-					local lua_opts = lsp.nvim_lua_ls()
-					require("lspconfig").lua_ls.setup(lua_opts)
-				end,
-				jdtls = lsp.noop,
-			},
-		})
-
-		local cmp_action = require("lsp-zero").cmp_action()
-		local cmp = require("cmp")
-		local cmp_select = { behavior = cmp.SelectBehavior.Select }
-		local cmp_format = require("lsp-zero").cmp_format()
-
-		-- `/` cmdline setup.
-		cmp.setup.cmdline("/", {
-			mapping = cmp.mapping.preset.cmdline(),
-			sources = {
-				{
-					name = "buffer",
-					get_bufnrs = function()
-						return vim.api.nvim_list_bufs()
-					end,
-				},
-			},
-		})
-
-		-- `:` cmdline setup.
-		cmp.setup.cmdline(":", {
-			mapping = cmp.mapping.preset.cmdline(),
-			sources = cmp.config.sources({
-				{ name = "path" },
-			}, {
-				{
-					name = "cmdline",
-					option = {
-						ignore_cmds = { "Man", "!" },
-					},
-				},
-			}),
-		})
-
-		cmp.setup({
-			formatting = cmp_format,
-			snippet = {
-				expand = function(args)
-					require("luasnip").lsp_expand(args.body)
-				end,
-			},
-			sources = {
-				{ name = "nvim_lsp" },
-				{ name = "luasnip", keyword_length = 2 },
-				{
-					name = "buffer",
-					keyword_length = 3,
-					get_bufnrs = function()
-						return vim.api.nvim_list_bufs()
-					end,
-				},
-				{ name = "path" },
-			},
-			mapping = cmp.mapping.preset.insert({
-				["<Tab>"] = cmp.mapping.select_next_item(cmp_select),
-				["<S-Tab>"] = cmp.mapping.select_prev_item(cmp_select),
-				["<CR>"] = cmp.mapping.confirm({ select = true }),
-				["<C-Space>"] = cmp.mapping.complete(),
-				["<C-f>"] = cmp_action.luasnip_jump_forward(),
-				["<C-b>"] = cmp_action.luasnip_jump_backward(),
-				["<C-Tab>"] = cmp_action.luasnip_supertab(),
-				["<C-S-Tab>"] = cmp_action.luasnip_shift_supertab(),
-			}),
-		})
-	end,
+	{
+		"L3MON4D3/LuaSnip",
+		version = "v2.*",
+		build = "make install_jsregexp",
+		dependencies = { "rafamadriz/friendly-snippets" },
+		config = function()
+			local ls = require("luasnip")
+			ls.filetype_extend("javascript", { "jsdoc" })
+		end,
+	},
+	{
+		"Bekaboo/dropbar.nvim",
+		branch = "feat-winbar-background-highlight",
+		dependencies = {
+			"nvim-telescope/telescope-fzf-native.nvim",
+		},
+	},
 }
