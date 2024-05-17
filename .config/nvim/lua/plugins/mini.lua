@@ -38,22 +38,23 @@ return {
 			local animate = require("mini.animate")
 			animate.setup({
 				cursor = {
-					timing = animate.gen_timing.exponential({ duration = 200, unit = "total" }),
-					path = animate.gen_path.angle(),
+					timing = animate.gen_timing.quartic({ duration = 222, unit = "total" }),
+					path = animate.gen_path.line(),
 				},
 				resize = { enable = false },
-				scroll = {
-					timing = animate.gen_timing.cubic({ duration = 10, unit = "total" }),
-					subscroll = animate.gen_subscroll.equal({
-						predicate = function(total_scroll)
-							if mouse_scrolled then
-								mouse_scrolled = false
-								return false
-							end
-							return total_scroll > 1
-						end,
-					}),
-				},
+				scroll = { enable = false },
+				-- scroll = {
+				-- 	timing = animate.gen_timing.exponential({ duration = 100, unit = "total" }),
+				-- 	subscroll = animate.gen_subscroll.equal({
+				-- 		predicate = function(total_scroll)
+				-- 			if mouse_scrolled then
+				-- 				mouse_scrolled = false
+				-- 				return false
+				-- 			end
+				-- 			return total_scroll > 1
+				-- 		end,
+				-- 	}),
+				-- },
 			})
 		end,
 	},
@@ -63,13 +64,13 @@ return {
 		version = false,
 		opts = {
 			mappings = {
-				add = "<leader>sa", -- Add surrounding in Normal and Visual modes
-				delete = "<leader>sd", -- Delete surrounding
-				find = "<leader>sf", -- Find surrounding (to the right)
-				find_left = "<leader>sF", -- Find surrounding (to the left)
-				highlight = "<leader>sh", -- Highlight surrounding
-				replace = "<leader>sr", -- Replace surrounding
-				update_n_lines = "<leader>sn", -- Update `n_lines`
+				add = "gsa", -- Add surrounding in Normal and Visual modes
+				delete = "gsd", -- Delete surrounding
+				find = "gsf", -- Find surrounding (to the right)
+				find_left = "gsF", -- Find surrounding (to the left)
+				highlight = "gsh", -- Highlight surrounding
+				replace = "gsr", -- Replace surrounding
+				update_n_lines = "gsn", -- Update `n_lines`
 			},
 			custom_surroundings = {
 				["<"] = { output = { left = "<", right = ">" } },
