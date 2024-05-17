@@ -47,7 +47,10 @@ return {
     },
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons"},
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
+            { "letieu/harpoon-lualine", dependencies = { "ThePrimeagen/harpoon" } },
+        },
         opts = {
             options = {
                 theme = "tokyonight",
@@ -57,7 +60,7 @@ return {
             sections = {
                 lualine_a = { { "mode", right_padding = 2 } },
                 lualine_b = { "diff", "diagnostics" },
-                lualine_c = {},
+                lualine_c = { "harpoon2" },
                 lualine_x = {},
                 lualine_y = { "filetype", "progress" },
                 lualine_z = { { "location", left_padding = 2 } },
@@ -132,5 +135,4 @@ return {
             },
         },
     },
-
 }
