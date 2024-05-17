@@ -1,11 +1,12 @@
 return {
     {
         "monaqa/dial.nvim",
+        event = "LazyFile",
         config = function()
             -- Don't know why I need to specify keymaps like this and not as lazy keys but meh whatever
             local dial_map = require("dial.map")
             local map = vim.keymap.set
-            local opts = { silent = true }
+            local opts = { noremap = true, silent = true }
             map("n", "<C-a>", dial_map.inc_normal(), opts)
             map("n", "<C-x>", dial_map.dec_normal(), opts)
             map("x", "<C-a>", dial_map.inc_visual(), opts)
@@ -65,7 +66,6 @@ return {
 	},
 	{
 		"nvim-telescope/telescope-media-files.nvim",
-		lazy = true,
 		dependencies = {
 			"nvim-lua/popup.nvim",
 			"nvim-lua/plenary.nvim",
@@ -83,5 +83,5 @@ return {
 			  },
 		},
 	},
-    { "tenxsoydev/karen-yank.nvim", config = true },
+    { "tenxsoydev/karen-yank.nvim", event = "LazyFile", config = true },
 }
