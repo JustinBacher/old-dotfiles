@@ -1,8 +1,6 @@
 return {
 	{ "echasnovski/mini.cursorword", event = "VeryLazy", version = false, config = true },
 	{ "echasnovski/mini.ai", event = "VeryLazy", version = false, config = true },
-	{ "echasnovski/mini.pairs", event = "VeryLazy", version = false, config = true },
-	{ "echasnovski/mini.indentscope", event = "VeryLazy", version = false, opts = { symbol = "▒" } },
 	{
 		"echasnovski/mini.map",
 		version = false,
@@ -26,15 +24,6 @@ return {
 		event = "VeryLazy",
 		version = false,
 		config = function()
-			local mouse_scrolled = false
-			for _, scroll in pairs({ "Up", "Down" }) do
-				local key = "<ScrollWheel" .. scroll .. ">"
-				vim.keymap.set({ "", "i" }, key, function()
-					mouse_scrolled = true
-					return key
-				end, { expr = true })
-			end
-
 			local animate = require("mini.animate")
 			animate.setup({
 				cursor = {
@@ -43,18 +32,6 @@ return {
 				},
 				resize = { enable = false },
 				scroll = { enable = false },
-				-- scroll = {
-				-- 	timing = animate.gen_timing.exponential({ duration = 100, unit = "total" }),
-				-- 	subscroll = animate.gen_subscroll.equal({
-				-- 		predicate = function(total_scroll)
-				-- 			if mouse_scrolled then
-				-- 				mouse_scrolled = false
-				-- 				return false
-				-- 			end
-				-- 			return total_scroll > 1
-				-- 		end,
-				-- 	}),
-				-- },
 			})
 		end,
 	},
@@ -75,6 +52,6 @@ return {
 			custom_surroundings = {
 				["<"] = { output = { left = "<", right = ">" } },
 			},
-		}
+		},
 	},
 }
