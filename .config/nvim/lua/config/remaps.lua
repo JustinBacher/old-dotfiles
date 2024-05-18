@@ -1,11 +1,3 @@
-local diagnostic_goto = function(next, severity)
-  local go = next and vim.diagnostic.goto_next or vim.diagnostic.goto_prev
-  severity = severity and vim.diagnostic.severity[severity] or nil
-  return function()
-    go({ severity = severity })
-  end
-end
-
 NOT_INSERT = { "n", "x", "v", "o" }
 
 return {
@@ -16,16 +8,16 @@ return {
 	{ "<leader>w", "<cmd>w<cr><esc>", desc = "Write file" },
 
 	-- Movement
-	{ "J", "<C-d>zz", mode = NOT_INSERT, noremap = true, desc = "Move up half page" },
-	{ "K", "<C-u>zz", mode = NOT_INSERT, noremap = true, desc = "Move up half page" },
-	{ "H", "^", mode = NOT_INSERT, noremap = true, desc = "Easier goto beginning of line" },
-	{ "L", "$", mode = NOT_INSERT, noremap = true, desc = "Easier goto end of line" },
+	{ "J", "<C-d>zz", mode = NOT_INSERT, desc = "Move up half page" },
+	{ "K", "<C-u>zz", mode = NOT_INSERT, desc = "Move up half page" },
+	{ "H", "^", mode = NOT_INSERT, desc = "Easier goto beginning of line" },
+	{ "L", "$", mode = NOT_INSERT, desc = "Easier goto end of line" },
 
 	-- Moving lines
-	{ "<A-J>", "<cmd>m .+1<cr>==", noremap = true, desc = "Move Line Down" },
-	{ "<A-K>", "<cmd>m .-2<cr>==", noremap = true, desc = "Move Line Up" },
-	{ "<A-J>", "<cmd>m '>+1<CR>gv=gv", mode = "v", noremap = true, desc = "Move Line Down" },
-	{ "<A-K>", "<cmd>m '<-2<CR>gv=gv", mode = "v", noremap = true, desc = "Move Line Up" },
+	{ "<A-J>", "<cmd>m .+1<cr>==", desc = "Move Line Down" },
+	{ "<A-K>", "<cmd>m .-2<cr>==", desc = "Move Line Up" },
+	{ "<A-J>", "<cmd>m '>+1<CR>gv=gv", mode = "v", desc = "Move Line Down" },
+	{ "<A-K>", "<cmd>m '<-2<CR>gv=gv", mode = "v", desc = "Move Line Up" },
 
 	-- Tabs
 	{ "<Tab>", "<cmd>bnext<cr>", mode = NOT_INSERT, desc = "Next Tab" },
@@ -43,5 +35,10 @@ return {
 	{ "<leader>qf", "<cmd>copen<cr>", desc = "Quickfix List" },
 	{ "U", "<C-r>", desc = "Redo" },
 	{ "<esc>", "<cmd>noh<cr><esc>", desc = "Escape and Clear hlsearch" },
-	{ "gj", "J", mode = NOT_INSERT, noremap = true, desc = "join line below to the current one with one space in between (remap of J)" }
+	{
+		"gj",
+		"J",
+		mode = NOT_INSERT,
+		desc = "join line below to the current one with one space in between (remap of J)",
+	},
 }
