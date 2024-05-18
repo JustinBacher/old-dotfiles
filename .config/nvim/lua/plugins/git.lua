@@ -6,7 +6,7 @@ return {
 	},
 	{
 		"lewis6991/gitsigns.nvim",
-		event = "VeryLazy",
+		event = "LazyFile",
 		keys = {
 			{ "<leader>gp", "<cmd>GitSigns preview_hunk<cr>", desc = "Preview Hunk" },
 		},
@@ -26,5 +26,5 @@ return {
 		keys = {
 			{ "<leader>gg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
 		},
-	}
+	},
 }
