@@ -17,16 +17,16 @@ return {
 				if #vim.api.nvim_list_wins() == 1 and require("nvim-tree.utils").is_nvim_tree_buf() then
 					vim.cmd("quit")
 				end
-			end
+			end,
 		})
 		vim.api.nvim_create_autocmd({ "VimEnter" }, {
 			callback = function(data)
 				local real_file = vim.fn.filereadable(data.file) == 1
 				local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
 				if real_file and no_name then
-					require("nvim-tree.api").tree.toggle({ focus = false, find_file = true, })
+					require("nvim-tree.api").tree.toggle({ focus = false, find_file = true })
 				end
-			end
+			end,
 		})
 	end,
 	keys = {
@@ -50,12 +50,10 @@ return {
 					}
 				end,
 			},
-			width = function()
-				return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
-			end,
+			width = function() return math.floor(vim.opt.columns:get() * WIDTH_RATIO) end,
 		},
 		on_attach = function(bufnr)
-			local api = require('nvim-tree.api')
+			local api = require("nvim-tree.api")
 
 			local function opts(desc)
 				return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
@@ -63,38 +61,28 @@ return {
 
 			api.config.mappings.default_on_attach(bufnr)
 
-			vim.keymap.set('n', '<BS>', api.tree.change_root_to_parent, opts('Up'))
-			vim.keymap.set('n', '?', api.tree.toggle_help, opts('Help'))
+			vim.keymap.set("n", "<BS>", api.tree.change_root_to_parent, opts("Up"))
+			vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
 			vim.keymap.set("n", "h", api.tree.close, opts("Close"))
 			vim.keymap.set("n", "H", api.tree.collapse_all, opts("Collapse All"))
-			vim.keymap.set(
-				"n",
-				"l",
-				function()
-					local node = api.tree.get_node_under_cursor()
-					if node.nodes ~= nil then
-						api.node.open.edit()
-					else
-						api.node.open.edit()
-						api.tree.close()
-					end
-				end,
-				opts("Edit Or Open")
-			)
-			vim.keymap.set(
-				"n",
-				"L",
-				function()
-					local node = api.tree.get_node_under_cursor()
-					if node.nodes ~= nil then
-						api.node.open.edit()
-					else
-						api.node.open.vertical()
-					end
-					api.tree.focus()
-				end,
-				opts("Vsplit Preview")
-			)
+			vim.keymap.set("n", "l", function()
+				local node = api.tree.get_node_under_cursor()
+				if node.nodes ~= nil then
+					api.node.open.edit()
+				else
+					api.node.open.edit()
+					api.tree.close()
+				end
+			end, opts("Edit Or Open"))
+			vim.keymap.set("n", "L", function()
+				local node = api.tree.get_node_under_cursor()
+				if node.nodes ~= nil then
+					api.node.open.edit()
+				else
+					api.node.open.vertical()
+				end
+				api.tree.focus()
+			end, opts("Vsplit Preview"))
 		end,
 	},
 }
