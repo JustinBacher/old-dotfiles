@@ -34,11 +34,8 @@ return {
 	{ "<leader>ll", "<cmd>lopen<cr>", desc = "Location List" },
 	{ "<leader>qf", "<cmd>copen<cr>", desc = "Quickfix List" },
 	{ "U", "<C-r>", desc = "Redo" },
+	{ "u", "~", mode = "v", desc = "Toggle case" },
 	{ "<esc>", "<cmd>noh<cr><esc>", desc = "Escape and Clear hlsearch" },
-	{
-		"gj",
-		"J",
-		mode = NOT_INSERT,
-		desc = "join line below to the current one with one space in between (remap of J)",
-	},
+	{ "gj", "J", mode = NOT_INSERT, desc = "Join line below. (remap of J)" },
+	{ "<CR>", "o<Esc>", desc = "Add new line below" },
 }
