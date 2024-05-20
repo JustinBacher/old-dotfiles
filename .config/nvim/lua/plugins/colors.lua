@@ -13,9 +13,14 @@ return {
 		priority = 1000,
 		opts = {
 			transparent = true,
+			styles = { sidebars = "transparent", floats = "transparent" },
 			on_highlights = function(hl, c) --- @diagnostic disable-line: unused-local
 				hl.MiniCursorword = { underline = true }
 				hl.MiniCursorwordCurrent = { underline = true }
+				hl.DiagnosticVirtualTextError = { bg = "NONE", fg = "#db4b4b" }
+				hl.DiagnosticVirtualTextWarn = { bg = "NONE", fg = "#e0af68" }
+				hl.DiagnosticVirtualTextInfo = { bg = "NONE", fg = "#0db9d7" }
+				hl.DiagnosticVirtualTextHint = { bg = "NONE", fg = "#1abc9c" }
 			end,
 		},
 	},
@@ -38,19 +43,17 @@ return {
 		cmd = "Themery",
 		config = function()
 			local status_ok, themery = pcall(require, "themery")
-			if not status_ok then
-				return
-			end
+			if not status_ok then return end
 			themery.setup({
 				themes = {
-					{ name = "Dracula Dark",         colorscheme = "dracula" },
-					{ name = "Dracula Soft",         colorscheme = "dracula-soft" },
-					{ name = "Tokyonight Storm",     colorscheme = "tokyonight-night" },
-					{ name = "Tokyonight Night",     colorscheme = "tokyonight-night" },
-					{ name = "Tokyonight Moon",      colorscheme = "tokyonight-moon" },
-					{ name = "Catppuccin Mocha",     colorscheme = "catppuccin-mocha" },
+					{ name = "Dracula Dark", colorscheme = "dracula" },
+					{ name = "Dracula Soft", colorscheme = "dracula-soft" },
+					{ name = "Tokyonight Storm", colorscheme = "tokyonight-night" },
+					{ name = "Tokyonight Night", colorscheme = "tokyonight-night" },
+					{ name = "Tokyonight Moon", colorscheme = "tokyonight-moon" },
+					{ name = "Catppuccin Mocha", colorscheme = "catppuccin-mocha" },
 					{ name = "Catppuccin Macchiato", colorscheme = "catppuccin-macchiato" },
-					{ name = "Rose Pine Moon",       colorscheme = "rose-pine-moon" },
+					{ name = "Rose Pine Moon", colorscheme = "rose-pine-moon" },
 				},
 				themeConfigFile = "~/dotfiles/.config/nvim/lua/config/theme.lua",
 				livePreview = true,
