@@ -1,8 +1,8 @@
 return {
-	{ "windwp/nvim-autopairs", event = "InsertEnter", config = true },
+	{ "windwp/nvim-autopairs", event = "LazyFile", config = true },
 	{
 		"monaqa/dial.nvim",
-		event = "LazyFile",
+		keys = { "<C-a>", "<C-x>", mode = { "n", "x" } },
 		config = function()
 			-- Don't know why I need to specify keymaps like this and not as lazy keys but meh whatever
 			local dial_map = require("dial.map")
@@ -17,6 +17,7 @@ return {
 
 			local augend = require("dial.augend")
 			require("dial.config").augends:register_group({
+				---@type table<( Augend | AugendConstant )>
 				default = {
 					augend.integer.alias.decimal,
 					augend.integer.alias.hex,
@@ -46,6 +47,7 @@ return {
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = { "nvim-telescope/telescope-media-files.nvim" },
+		cmd = "Telescope",
 		keys = {
 			{ "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
 			{ "<leader>/", "<cmd>Telescope live_grep<cr>", desc = "Grep (Root Dir)" },
@@ -58,9 +60,9 @@ return {
 			},
 		},
 		build = function()
-			local l = require("telescope").load_extension
-			l("media_files")
-			l("noice")
+			local load = require("telescope").load_extension
+			load("media_files")
+			load("noice")
 		end,
 		config = true,
 	},
