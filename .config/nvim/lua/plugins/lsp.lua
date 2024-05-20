@@ -1,56 +1,34 @@
+---@diagnostic disable-next-line: unused-local
+local function on_attach(client, bufnr)
+	-- X.set_default_on_buffer(client, bufnr)
+	local presentLspSignature, lsp_signature = pcall(require, "lsp_signature")
+	if presentLspSignature then lsp_signature.on_attach({ floating_window = false, timer_interval = 500 }) end
+
+	local cmp = require("cmp")
+	---@diagnostic disable-next-line: missing-parameter
+	if cmp.visible() then cmp.mapping.complete() end
+end
 return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			"williamboman/mason-lspconfig.nvim",
-			"b0o/schemastore.nvim",
 			"hrsh7th/nvim-cmp",
-			{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false },
+			"b0o/schemastore.nvim",
 			{ "folke/neodev.nvim", config = true },
 			{ "j-hui/fidget.nvim", config = true },
+			{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
 		},
 		event = "LazyFile",
-		config = function()
-			local l = require("lsp_lines")
-			for k, v in pairs(l) do
-				print(tostring(k), tostring(v))
-			end
-			-- require("lsp_lines").setup()
-
-			local lspconfig = require("lspconfig")
-			local presentCmpNvimLsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
-			local presentLspSignature, lsp_signature = pcall(require, "lsp_signature")
-
-			vim.lsp.set_log_level("error")
-
-			local function on_attach(client, bufnr)
-				-- X.set_default_on_buffer(client, bufnr)
-
-				if presentLspSignature then
-					lsp_signature.on_attach({ floating_window = false, timer_interval = 500 })
-				end
-			end
-
-			local signs = {
-				{ name = "DiagnosticSignError", text = " " },
-				{ name = "DiagnosticSignWarn", text = " " },
-				{ name = "DiagnosticSignHint", text = " " },
-				{ name = "DiagnosticSignInfo", text = " " },
-			}
-			for _, sign in ipairs(signs) do
-				vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
-			end
-
-			local config = {
-				virtual_text = false, -- appears after the line
-				virtual_lines = false, -- appears under the line
+		opts = {
+			lsp = {
+				virtual_text = false,
+				virtual_lines = true,
 				signs = {
-					active = signs,
+					active = require("config.icons"),
 				},
-				flags = {
-					debounce_text_changes = 200,
-				},
-				update_in_insert = true,
+				flags = { debounce_text_changes = 200 },
+				update_in_insert = false,
 				underline = true,
 				severity_sort = true,
 				float = {
@@ -62,24 +40,8 @@ return {
 					header = "",
 					prefix = "",
 				},
-			}
-			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, config)
-			vim.diagnostic.config(config)
-
-			local border = {
-				border = "shadow",
-			}
-			vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, border)
-			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, border)
-
-			local capabilities
-			if presentCmpNvimLsp then
-				capabilities = cmp_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities())
-			else
-				capabilities = vim.lsp.protocol.make_client_capabilities()
-			end
-
-			local servers = {
+			},
+			servers = {
 				dockerls = {},
 				html = {},
 				jsonls = {},
@@ -94,6 +56,7 @@ return {
 							hint = { enable = true },
 							runtime = { version = "LuaJIT" },
 							diagnostics = { globals = { "vim" } },
+							telemetry = { enable = false },
 							workspace = {
 								checkThirdParty = false,
 								library = {
@@ -101,7 +64,6 @@ return {
 									[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
 								},
 							},
-							telemetry = { enable = false },
 						},
 					},
 				},
@@ -126,36 +88,40 @@ return {
 					},
 					init_options = { hostInfo = "neovim" },
 					-- root_dir = util.root_pattern("package.json", "package-lock.json", "tsconfig.json", "jsconfig.json", ".git"),
-					root_dir = require("lspconfig.util").find_node_modules_ancestor,
+					root_dir = function() return require("lspconfig.util").find_node_modules_ancestor end,
 					single_file_support = true,
 				},
 				yamlls = {},
-			}
-
+			},
+		},
+		init = function(plugin)
+			for name, sign in pairs(require("config.icons").lsp.diagnostics) do
+				vim.fn.sign_define(name, { texthl = name, text = sign, numhl = "" })
+			end
+			vim.lsp.set_log_level("error")
+			vim.diagnostic.config(plugin.opts.lsp)
+			vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "shadow" })
+			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "shadow" })
+		end,
+		config = function(_, opts)
+			local lspconfig = require("lspconfig")
+			local cmp_lsp = require("cmp_nvim_lsp")
 			local default_lsp_config = {
 				on_attach = on_attach,
-				capabilities = capabilities,
-				flags = {
-					debounce_text_changes = 200,
-					allow_incremental_sync = true,
-				},
+				capabilities = cmp_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+				flags = { debounce_text_changes = 200, allow_incremental_sync = true },
 			}
 
-			local server_names = {}
-			for server_name, _ in pairs(servers) do
-				table.insert(server_names, server_name)
-			end
+			require("mason-lspconfig").setup({ ensure_installed = vim.tbl_keys(opts.servers) })
+			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, opts.lsp)
 
-			local present_mason, mason = pcall(require, "mason-lspconfig")
-			if present_mason then mason.setup({ ensure_installed = server_names }) end
-
-			for server_name, server_config in pairs(servers) do
+			for server_name, server_config in pairs(opts.servers) do
 				local merged_config = vim.tbl_deep_extend("force", default_lsp_config, server_config)
 				lspconfig[server_name].setup(merged_config)
 
 				if server_name == "rust_analyzer" then
-					local present_rust_tools, rust_tools = pcall(require, "rust-tools")
-					if present_rust_tools then rust_tools.setup({ server = merged_config }) end
+					local rust_tools_present, rust_tools = pcall(require, "rust-tools")
+					if rust_tools_present then rust_tools.setup({ server = merged_config }) end
 				end
 			end
 		end,
@@ -170,10 +136,7 @@ return {
 				python = { "isort", "black" },
 				cpp = { "astyle" },
 			},
-			format_on_save = {
-				timeout_ms = 500,
-				lsp_fallback = true,
-			},
+			format_on_save = { timeout_ms = 500, lsp_fallback = true },
 		},
 		keys = {
 			{
@@ -194,121 +157,147 @@ return {
 			vim.o.foldenable = true
 		end,
 		keys = {
-			{
-				"zR",
-				function() require("ufo").openAllFolds() end,
-				desc = "Open all folds",
-			},
-			{
-				"zM",
-				function() require("ufo").closeAllFolds() end,
-				desc = "Close all folds",
-			},
+			{ "zR", function() require("ufo").openAllFolds() end, desc = "Open all folds" },
+			{ "zM", function() require("ufo").closeAllFolds() end, desc = "Close all folds" },
 			{
 				"zK",
-				function()
-					if not require("ufo").peekFoldedLinesUnderCursor() then vim.lsp.buf.hover() end
-				end,
+				function() return require("ufo").peekFoldedLinesUnderCursor() or vim.lsp.buf.hover() end,
 				desc = "Peek Fold",
 			},
 		},
 		opts = {
-			provider_selector = function(bufnr, filetype, buftype) ---@diagnostic disable-line: unused-local
-				return { "lsp", "indent" }
-			end,
+			---@diagnostic disable-next-line: unused-local
+			provider_selector = function(bufnr, filetype, buftype) return { "lsp", "indent" } end,
 		},
+	},
+	{
+		"windwp/nvim-autopairs",
+		opts = { enable_check_bracket_pairs = false, fast_wrap = {} },
+		build = function()
+			local npairs = require("nvim-autopairs")
+			local Rule = require("nvim-autopairs.rule")
+			local cond = require("nvim-autopairs.conds")
+
+			npairs.add_rules({
+				Rule(" ", " ", "lua")
+					:with_pair(function(opts)
+						local pair = opts.line:sub(opts.col - 1, opts.col)
+						return vim.tbl_contains({ "{}" }, pair)
+					end)
+					:with_move(cond.none())
+					:with_cr(cond.none())
+					:with_del(function(opts)
+						local col = vim.api.nvim_win_get_cursor(0)[2]
+						return vim.tbl_contains({ "{ }" }, opts.line:sub(col - 1, col + 2))
+					end),
+			})
+			-- For each pair of brackets we will add another rule
+			npairs.add_rules({
+				-- Each of these rules is for a pair with left-side '( ' and right-side ' )' for each bracket type
+				Rule("{ ", " }", "lua")
+					:with_pair(cond.none())
+					:with_move(function(opts) return opts.char == "}" end)
+					:with_del(cond.none())
+					:use_key("}")
+					-- Removes the trailing whitespace that can occur without this
+					:replace_map_cr(
+						function(_) return "<C-c>2xi<CR><C-c>O" end
+					),
+			})
+		end,
 	},
 	-- Completion
 	{
 		"hrsh7th/nvim-cmp",
 		version = false,
-		event = "LazyFile",
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
+			"windwp/nvim-autopairs",
+			"saadparwaiz1/cmp_luasnip",
 			"saadparwaiz1/cmp_luasnip",
 			"hrsh7th/cmp-nvim-lua",
-			"windwp/nvim-autopairs",
 			"onsails/lspkind-nvim",
 			{ "roobert/tailwindcss-colorizer-cmp.nvim", config = true },
+			{ "L3MON4D3/LuaSnip", version = "v2.*", build = "make install_jsregexp" },
 		},
-		config = function()
+		opts = {
+			enabled = true,
+			experimental = { ghost_text = true },
+			---@diagnostic disable-next-line: missing-fields
+			formatting = {
+				format = function()
+					local kind = require("lspkind")
+					local xtnd = vim.tbl_deep_extend
+					local icons = require("config.icons").lsp
+					return kind.cmp_format({
+						mode = "symbol_text",
+						maxwidth = function() return math.floor(0.3 * vim.o.columns) end,
+						ellipsis_char = "",
+						show_labelDetails = true,
+						before = function(entry, item)
+							local k = item.kind
+							item.kind = string.format("%s %s", xtnd("force", kind.symbol_map, icons.kind)[k], k)
+							-- item.menu = icons.menu[entry.source_name]
+							return item
+						end,
+					})
+				end,
+			},
+			sources = {
+				{ name = "nvim_lsp_signature_help", group_index = 1 },
+				{ name = "luasnip", max_item_count = 5, group_index = 1 },
+				{ name = "nvim_lsp", max_item_count = 20, group_index = 1 },
+				{ name = "nvim_lua", group_index = 1 },
+				{ name = "path", group_index = 2 },
+				{ name = "buffer", keyword_length = 2, max_item_count = 5, group_index = 2 },
+			},
+		},
+		config = function(_, opts)
 			local cmp = require("cmp")
-			---@diagnostic disable-next-line
-			cmp.setup({
-				enabled = true,
-				window = {
-					completion = cmp.config.window.bordered({
-						winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None",
-					}),
-					documentation = cmp.config.window.bordered({
-						winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None",
-					}),
-				},
-				view = {
-					entries = "bordered",
-				},
-				snippet = {
-					expand = function(args) require("luasnip").lsp_expand(args.body) end,
-				},
-				formatting = {
-					format = require("lspkind").cmp_format({
-						mode = "symbol", -- show only symbol annotations
-						-- maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-						-- can also be a function to dynamically calculate max width such as
-						maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
-						ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-						show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+			local luasnip = require("luasnip")
+			local api = vim.api
+			local send = vim.fn.feedkeys
+			local function next_completion(fallback)
+				if cmp.visible() then
+					cmp.select_next_item()
+				elseif luasnip.expand_or_jumpable() then
+					send(api.nvim_replace_termcodes("<Plug>luasnip-expand-or-jump", true, true, true), "")
+				end
+				fallback()
+			end
 
-						-- The function below will be called before any actual modifications from lspkind
-						-- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-						-- before = function (entry, vim_item)
-						-- 	return vim_item
-						-- end
-					}),
-				},
-				mapping = {
-					["<C-d>"] = cmp.mapping.scroll_docs(-4),
-					["<C-u>"] = cmp.mapping.scroll_docs(4),
-					["<C-e>"] = cmp.mapping.close(),
-					["<Esc>"] = cmp.mapping.close(),
-					["<C-y>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
-					["<C-n>"] = function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						elseif require("luasnip").expand_or_jumpable() then
-							vim.fn.feedkeys(
-								vim.api.nvim_replace_termcodes("<Plug>luasnip-expand-or-jump", true, true, true),
-								""
-							)
-						else
-							fallback()
-						end
-					end,
-					["<C-p>"] = function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						elseif require("luasnip").jumpable(-1) then
-							vim.fn.feedkeys(
-								vim.api.nvim_replace_termcodes("<Plug>luasnip-jump-prev", true, true, true),
-								""
-							)
-						else
-							fallback()
-						end
-					end,
-				},
-				sources = {
-					{ name = "nvim_lsp_signature_help", group_index = 1 },
-					{ name = "luasnip", max_item_count = 5, group_index = 1 },
-					{ name = "nvim_lsp", max_item_count = 20, group_index = 1 },
-					{ name = "nvim_lua", group_index = 1 },
-					{ name = "path", group_index = 2 },
-					{ name = "buffer", keyword_length = 2, max_item_count = 5, group_index = 2 },
-				},
-			})
+			local function prev_completion(fallback)
+				if cmp.visible() then
+					cmp.select_prev_item()
+				elseif luasnip.jumpable(-1) then
+					send(api.nvim_replace_termcodes("<Plug>luasnip-jump-prev", true, true, true), "")
+				end
+				fallback()
+			end
+
+			opts.snippet = { expand = function(args) luasnip.lsp_expand(args.body) end }
+			opts.window = {
+				completion = cmp.config.window.bordered({
+					winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None",
+				}),
+				documentation = cmp.config.window.bordered({
+					winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None",
+				}),
+			}
+			opts.mapping = {
+				["<C-f>"] = cmp.mapping.scroll_docs(-4),
+				["<C-b>"] = cmp.mapping.scroll_docs(4),
+				["<Esc>"] = cmp.mapping.close(),
+				["<C-l>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+				["<C-j>"] = next_completion,
+				["<C-k>"] = prev_completion,
+				["<C-Space>"] = cmp.mapping.complete(), ---@diagnostic disable-line: missing-parameter
+			}
+			---@diagnostic disable-next-line
+			cmp.setup(opts)
 			local presentAutopairs, cmp_autopairs = pcall(require, "nvim-autopairs.completion.cmp")
 			if presentAutopairs then
 				cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
@@ -316,25 +305,15 @@ return {
 		end,
 	},
 	-- UI
-	{
-		"j-hui/fidget.nvim",
-		config = true,
-	},
+	{ "j-hui/fidget.nvim", config = true },
 	{
 		"glepnir/lspsaga.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		event = "LazyFile",
 		opts = {
-			implement = {
-				enable = true,
-				lang = { "rust" },
-			},
-			lightbulb = {
-				sign = false,
-			},
-			code_action = {
-				extend_gitsigns = true,
-			},
+			implement = { enable = true, lang = { "rust" } },
+			lightbulb = { sign = false },
+			code_action = { extend_gitsigns = true },
 		},
 		keys = {
 			{ "ga", "<cmd>Lspsaga finder<cr>", desc = "Open symbol finder" },
@@ -344,7 +323,7 @@ return {
 			{ "gr", "<cmd>Lspsaga rename<cr>", desc = "Rename symbol" },
 			{ "gR", "<cmd>Lspsaga rename ++project<cr>", desc = "Rename symbol (project)" },
 			{ "gd", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek definition" },
-			{ "gD", "<cmd>Lspsaga goto_definition<cr>", desc = "Goto definition" },
+			{ "gD", "<cmdLspsaga goto_definition<cr>", desc = "Goto definition" },
 			{ "gt", "<cmd>Lspsaga peek_type_definition<cr>", desc = "Peek type definition" },
 			{ "gT", "<cmd>Lspsaga goto_type_definition<cr>", desc = "Goto type definition" },
 			{ "<leader>sl", "<cmd>Lspsaga show_line_diagnostics ++unfocus<cr>", desc = "Show line diagnostics" },
@@ -354,38 +333,8 @@ return {
 			{ "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = "Jump to previous diagnostic" },
 			{ "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = "Jump to next diagnostic" },
 			{ "go", "<cmd>Lspsaga outline<cr>", desc = "Show outline" },
-			{
-				"[e",
-				function() require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity.ERROR }) end,
-				desc = "Jump to previous error",
-			},
-			{
-				"]e",
-				function() require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity.ERROR }) end,
-				desc = "Jump to next error",
-			},
-			{
-				"[w",
-				function() require("lspsaga.diagnostic"):goto_prev({ severity = vim.diagnostic.severity.WARN }) end,
-				desc = "Jump to previous warning",
-			},
-			{
-				"]w",
-				function() require("lspsaga.diagnostic"):goto_next({ severity = vim.diagnostic.severity.WARN }) end,
-				desc = "Jump to next warning",
-			},
-			{
-				"<A-d>",
-				"<cmd>Lspsaga term_toggle<cr>",
-				desc = "Toggle floating terminal",
-				mode = { "n", "t" },
-			},
-			{
-				"<leader>a",
-				"<cmd>Lspsaga code_action<cr>",
-				desc = "Show code actions",
-				mode = { "n", "v" },
-			},
+			{ "<A-d>", "<cmd>Lspsaga term_toggle<cr>", desc = "Toggle floating terminal", mode = { "n", "t" } },
+			{ "<leader>a", "<cmd>Lspsaga code_action<cr>", desc = "Show code actions", mode = { "n", "v" } },
 		},
 	},
 }
