@@ -95,23 +95,25 @@ return {
 				format = function(entry, item)
 					local kind = lspkind.cmp_format({
 						mode = "symbol_text",
-						maxwidth = function() return math.floor(0.3 * vim.o.columns) end,
+						maxwidth = 50,
 						ellipsis_char = "",
 						symbol_map = icons.kind,
 					})(entry, item)
 					local strings = vim.split(kind.kind, "%s", { trimempty = true })
 					kind.kind = " " .. (strings[1] or "") .. " "
-					kind.menu = "    (" .. (strings[2] or "") .. ")"
+					kind.abbr = "   " .. kind.abbr
 					return kind
 				end,
-				before = function(entry, item) ---@diagnostic disable-line: redefined-local
-					item.kind = icons.kind[item.kind] .. item.kind
-					item.menu = entry.source_name or icons.menu[entry.source_name]
-					return item
-				end,
+				-- before = function(entry, item) ---@diagnostic disable-line: redefined-local
+				-- 	item.kind = icons.kind[item.kind] .. item.kind
+				-- 	item.menu = entry.source_name or icons.menu[entry.source_name]
+				-- 	print(entry.source_name)
+				-- 	return item
+				-- end,
 			},
 			window = {
 				completion = {
+					border = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
 					winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None", -- "Normal:Normal,Search:None",
 					col_offset = -3,
 					side_padding = 0,
