@@ -12,7 +12,6 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"williamboman/mason-lspconfig.nvim",
 			"hrsh7th/nvim-cmp",
 			"b0o/schemastore.nvim",
 			{ "folke/neodev.nvim", config = true },
@@ -21,85 +20,30 @@ return {
 		},
 		event = "LazyFile",
 		opts = {
-			lsp = {
-				virtual_text = false,
-				virtual_lines = true,
-				signs = {
-					active = require("config.icons"),
-				},
-				flags = { debounce_text_changes = 200 },
-				update_in_insert = false,
-				underline = true,
-				severity_sort = true,
-				float = {
-					focus = false,
-					focusable = false,
-					style = "minimal",
-					border = "shadow",
-					source = "always",
-					header = "",
-					prefix = "",
-				},
+			virtual_text = false,
+			virtual_lines = true,
+			signs = {
+				active = require("config.icons"),
 			},
-			servers = {
-				dockerls = {},
-				html = {},
-				jsonls = {},
-				lua_ls = {
-					on_attach = function(client, bufnr)
-						on_attach(client, bufnr)
-						client.server_capabilities.document_formatting = false
-						client.server_capabilities.document_range_formatting = false
-					end,
-					settings = {
-						Lua = {
-							hint = { enable = true },
-							runtime = { version = "LuaJIT" },
-							diagnostics = { globals = { "vim" } },
-							telemetry = { enable = false },
-							workspace = {
-								checkThirdParty = false,
-								library = {
-									[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-									[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-								},
-							},
-						},
-					},
-				},
-				pylsp = {},
-				rust_analyzer = {},
-				tailwindcss = {},
-				terraformls = {},
-				tflint = {},
-				tsserver = {
-					on_attach = function(client, bufnr)
-						on_attach(client, bufnr)
-						client.server_capabilities.document_formatting = true
-					end,
-					cmd = { "typescript-language-server", "--stdio" },
-					filetypes = {
-						"javascript",
-						"javascriptreact",
-						"javascript.jsx",
-						"typescript",
-						"typescriptreact",
-						"typescript.tsx",
-					},
-					init_options = { hostInfo = "neovim" },
-					-- root_dir = util.root_pattern("package.json", "package-lock.json", "tsconfig.json", "jsconfig.json", ".git"),
-					root_dir = function() return require("lspconfig.util").find_node_modules_ancestor end,
-					single_file_support = true,
-				},
-				yamlls = {},
+			flags = { debounce_text_changes = 200 },
+			update_in_insert = false,
+			underline = true,
+			severity_sort = true,
+			float = {
+				focus = false,
+				focusable = false,
+				style = "minimal",
+				border = "shadow",
+				source = "always",
+				header = "",
+				prefix = "",
 			},
 		},
-		init = function(plugin)
+		init = function(_, opts)
 			for name, sign in pairs(require("config.icons").lsp.diagnostics) do
 				vim.fn.sign_define(name, { texthl = name, text = sign, numhl = "" })
 			end
 			vim.lsp.set_log_level("error")
-			vim.diagnostic.config(plugin.opts.lsp)
 			vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "shadow" })
 			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "shadow" })
 		end,
@@ -112,10 +56,10 @@ return {
 				flags = { debounce_text_changes = 200, allow_incremental_sync = true },
 			}
 
-			require("mason-lspconfig").setup({ ensure_installed = vim.tbl_keys(opts.servers) })
-			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, opts.lsp)
+			vim.diagnostic.config(opts)
+			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, opts)
 
-			for server_name, server_config in pairs(opts.servers) do
+			for server_name, server_config in pairs(require("config.langs")) do
 				local merged_config = vim.tbl_deep_extend("force", default_lsp_config, server_config)
 				lspconfig[server_name].setup(merged_config)
 

@@ -9,14 +9,13 @@ return {
 			"MasonUninstallAll",
 			"MasonLog",
 		},
-		event = "LazyFile",
 		config = true,
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
 		dependencies = { "williamboman/mason.nvim" },
 		opts = {
-			ensure_installed = {},
+			ensure_installed = vim.tbl_keys(require("configs.langs"))),
 			inlay_hints = { enabled = true },
 		},
 	},
@@ -26,9 +25,7 @@ return {
 		opts = {},
 		config = function(_, opts)
 			local mdap = require("mason-nvim-dap")
-			mdap.setup(vim.tbl_deep_extend("force", opts, {
-				handlers = { mdap.default_setup },
-			}))
+			mdap.setup(vim.tbl_deep_extend("force", opts, { handlers = { mdap.default_setup } }))
 		end,
 	},
 }
