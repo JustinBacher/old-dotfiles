@@ -1,18 +1,7 @@
----@diagnostic disable-next-line: unused-local
-local function on_attach(client, bufnr)
-	-- X.set_default_on_buffer(client, bufnr)
-	local presentLspSignature, lsp_signature = pcall(require, "lsp_signature")
-	if presentLspSignature then lsp_signature.on_attach({ floating_window = false, timer_interval = 500 }) end
-
-	local cmp = require("cmp")
-	---@diagnostic disable-next-line: missing-parameter
-	if cmp.visible() then cmp.mapping.complete() end
-end
 return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"hrsh7th/nvim-cmp",
 			"b0o/schemastore.nvim",
 			{ "folke/neodev.nvim", config = true },
 			{ "j-hui/fidget.nvim", config = true },
@@ -49,23 +38,18 @@ return {
 		end,
 		config = function(_, opts)
 			local lspconfig = require("lspconfig")
-			local cmp_lsp = require("cmp_nvim_lsp")
-			local default_lsp_config = {
-				on_attach = on_attach,
-				capabilities = cmp_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities()),
-				flags = { debounce_text_changes = 200, allow_incremental_sync = true },
-			}
-
+			
 			vim.diagnostic.config(opts)
 			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, opts)
 
 			for server_name, server_config in pairs(require("config.langs")) do
-				local merged_config = vim.tbl_deep_extend("force", default_lsp_config, server_config)
-				lspconfig[server_name].setup(merged_config)
+				lspconfig[server_name].setup(server_config)
 
 				if server_name == "rust_analyzer" then
 					local rust_tools_present, rust_tools = pcall(require, "rust-tools")
 					if rust_tools_present then rust_tools.setup({ server = merged_config }) end
+				elseif server_name == "lua_ls" then
+					require("neodev")
 				end
 			end
 		end,
