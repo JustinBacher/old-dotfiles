@@ -1,15 +1,27 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
 	version = false,
-	build = ":TSUpdate",
 	event = "LazyFile",
 	lazy = vim.fn.argc(-1) == 0,
 	main = "nvim-treesitter.configs",
-	cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+	cmd = {
+		"TSUpdate",
+		"TSUpdateSync",
+		"TSUpdate",
+		"TSInstallInfo",
+		"TSInstall",
+		"TSEnable",
+		"TSDisable",
+		"TSBufEnable",
+		"TSBufDisable",
+		"TSModuleInfo",
+	},
 	init = function(plugin)
 		require("lazy.core.loader").add_to_rtp(plugin)
 		require("nvim-treesitter.query_predicates")
+		vim.filetype.add({ pattern = { [".*/hypr/.*%.conf"] = "hyprlang" } })
 	end,
+	build = ":TSUpdate",
 	--- @diagnostic disable-next-line: missing-fields
 	opts = {
 		ensure_installed = {
@@ -17,6 +29,7 @@ return {
 			"c",
 			"diff",
 			"html",
+			"hyprlang",
 			"javascript",
 			"jsdoc",
 			"json",
