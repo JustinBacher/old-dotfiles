@@ -1,7 +1,14 @@
+local function ensure_trouble()
+ local t = require("trouble")
+ if not t.is_open() then t.open("document_diagnostics")
+ return t
+end
+
 return {
+ { "gen740/SmoothCursor.nvim", config = true },
+ { "stevearc/dressing.nvim", config = true },
 	{
 		"lukas-reineke/indent-blankline.nvim",
-		main = "ibl",
 		opts = {
 			RainbowRed = "#E06C75",
 			RainbowYellow = "#E5C07B",
@@ -26,29 +33,28 @@ return {
 	},
 	{
 		"folke/trouble.nvim",
-		event = "LazyFile",
+		cmd = "Trouble",
 		dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
 		opts = { use_diagnostic_signs = true },
 		keys = {
 			{ "<leader>dx", "<Cmd>Trouble<CR>", desc = "Toggle Trouble" },
-			{ "<leader>dw", function() require("trouble").toggle("workspace_diagnostics") end },
+			{ "<leader>dw", require("trouble").toggle("workspace_diagnostics") end },
 			{ "<leader>dd", function() require("trouble").toggle("document_diagnostics") end },
 			{ "<leader>dq", function() require("trouble").toggle("quickfix") end },
 			{ "<leader>dl", function() require("trouble").toggle("loclist") end },
 			{ "gR", function() require("trouble").toggle("lsp_references") end },
 			{
 				"<leader>dn",
-				function() require("trouble").next({ skip_groups = true, jump = true }) end,
+				function() ensure_trouble().next({ skip_groups = true, jump = true }) end,
 				desc = "Goto next workspace diagnostic",
 			},
 			{
 				"<leader>dp",
-				function() require("trouble").previous({ skip_groups = true, jump = true }) end,
+				function() ensure_trouble().previous({ skip_groups = true, jump = true }) end,
 				desc = "Goto next workspace diagnostic",
 			},
 		},
 	},
-	{ "stevearc/dressing.nvim", config = true },
 	{
 		"nvim-lualine/lualine.nvim",
 		-- version = false,
@@ -123,32 +129,6 @@ return {
 		},
 	},
 	{
-		"akinsho/bufferline.nvim",
-		version = false,
-		dependencies = "nvim-tree/nvim-web-devicons",
-		event = "LazyFile",
-		opts = {
-			options = {
-				diagnostics = "nvim_lsp",
-				--- @diagnostic disable-next-line: unused-local
-				diagnostics_indicator = function(count, level, diagnostics_dict, context)
-					local s = " "
-					for e, n in pairs(diagnostics_dict) do
-						s = s .. n .. e == "error" and " " or (e == "warning" and " " or "")
-					end
-					return s
-				end,
-			},
-		},
-	},
-
-	{
-		"folke/trouble.nvim",
-		event = "LazyFile",
-		dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
-		opts = { use_diagnostic_signs = true },
-	},
-	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		dependencies = {
@@ -192,7 +172,6 @@ return {
 	},
 	{
 		"rcarriga/nvim-notify",
-		event = "VeryLazy",
 		keys = {
 			{
 				"<leader>nd",
@@ -215,7 +194,7 @@ return {
 	{
 		"akinsho/bufferline.nvim",
 		version = false,
-		enabled = false, -- TODO: Disable until I find out if I still need with coq setup
+		enabled = false, -- TODO: dont think i need with lsp_lines
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
 			options = {
