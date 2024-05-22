@@ -23,9 +23,7 @@ return {
 			end,
 		})
 	end,
-	keys = {
-		{ "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Open File Tree" },
-	},
+	keys = { { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Open File Tree" } },
 	opts = {
 		view = {
 			float = {
@@ -50,13 +48,9 @@ return {
 			local api = require("nvim-tree.api")
 			api.config.mappings.default_on_attach(bufnr)
 
-			local function map(key, op, desc)
-				vim.keymap.set(
-					"n",
-					key,
-					op,
-					{ desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-				)
+			local function map(key, op, desc, opts)
+				local default_opts = { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+				vim.keymap.set( "n", key, op, vim.tbl_deep_extend("force", default_opts, opts or {}))
 			end
 
 			map("<BS>", api.tree.change_root_to_parent, "Up")
@@ -64,6 +58,7 @@ return {
 			map("h", api.tree.close, "Close")
 			map("H", api.tree.collapse_all, "Collapse All")
 			map("l", function()
+				print("hii")
 				if api.tree.get_node_under_cursor().nodes ~= nil then
 					api.node.open.edit()
 				else

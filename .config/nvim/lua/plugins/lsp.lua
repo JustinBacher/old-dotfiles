@@ -2,9 +2,9 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
+			"williamboman/mason-lspconfig.nvim",
 			"b0o/schemastore.nvim",
 			{ "folke/neodev.nvim", config = true },
-			{ "j-hui/fidget.nvim", config = true },
 			{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
 		},
 		event = "LazyFile",
@@ -12,7 +12,7 @@ return {
 			virtual_text = false,
 			virtual_lines = true,
 			signs = {
-				active = require("config.icons"),
+				active = require("plugins.configs.icons"),
 			},
 			flags = { debounce_text_changes = 200 },
 			update_in_insert = false,
@@ -29,7 +29,7 @@ return {
 			},
 		},
 		init = function(_, opts)
-			for name, sign in pairs(require("config.icons").lsp.diagnostics) do
+			for name, sign in pairs(require("plugins.configs.icons").lsp.diagnostics) do
 				vim.fn.sign_define(name, { texthl = name, text = sign, numhl = "" })
 			end
 			vim.lsp.set_log_level("error")
@@ -38,16 +38,16 @@ return {
 		end,
 		config = function(_, opts)
 			local lspconfig = require("lspconfig")
-			
+
 			vim.diagnostic.config(opts)
 			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, opts)
 
-			for server_name, server_config in pairs(require("config.langs")) do
+			for server_name, server_config in pairs(require("plugins.configs.langs")) do
 				lspconfig[server_name].setup(server_config)
 
 				if server_name == "rust_analyzer" then
 					local rust_tools_present, rust_tools = pcall(require, "rust-tools")
-					if rust_tools_present then rust_tools.setup({ server = merged_config }) end
+					if rust_tools_present then rust_tools.setup({ server = server_config }) end
 				elseif server_name == "lua_ls" then
 					require("neodev")
 				end
@@ -135,7 +135,11 @@ return {
 		end,
 	},
 	-- UI
-	{ "j-hui/fidget.nvim", config = true },
+	{ "j-hui/fidget.nvim", opts = {
+		suppress_on_insert = true,
+		ignore_done_already  = false,
+		ignore_empty_message = true,
+	} },
 	{
 		"glepnir/lspsaga.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },

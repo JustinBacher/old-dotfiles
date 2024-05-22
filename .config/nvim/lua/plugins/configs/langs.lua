@@ -9,9 +9,16 @@ local function on_attach(client, bufnr)
 	if cmp.visible() then cmp.mapping.complete() end
 end
 
+local ok, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+local capabilities = {}
+if ok then
+	capabilities = cmp_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities())
+end
+
 local default_lsp_config = {
+		
     on_attach = on_attach,
-    capabilities = cmp_lsp.default_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    capabilities = capabilities,
     flags = { debounce_text_changes = 200, allow_incremental_sync = true },
 }
 
@@ -34,7 +41,6 @@ return {
                     hint = { enable = true },
                     runtime = { version = "LuaJIT" },
                     diagnostics = { globals = { "vim" } },
-                    telemetry = { enable = false },
                     workspace = {
                         checkThirdParty = false,
                         library = {
@@ -64,12 +70,11 @@ return {
                 "typescript",
                 "typescriptreact",
                 "typescript.tsx",
-            }),
+            },
             init_options = { hostInfo = "neovim" },
             -- root_dir = util.root_pattern("package.json", "package-lock.json", "tsconfig.json", "jsconfig.json", ".git"),
             root_dir = function() return require("lspconfig.util").find_node_modules_ancestor end,
             single_file_support = true,
-        },
+        }),
         yamlls = default_lsp_config,
-    },
 }
