@@ -20,22 +20,6 @@ return {
 		end,
 	},
 	{
-		"echasnovski/mini.animate",
-		event = "VeryLazy",
-		version = false,
-		config = function()
-			local animate = require("mini.animate")
-			animate.setup({
-				cursor = {
-					timing = animate.gen_timing.quartic({ duration = 222, unit = "total" }),
-					path = animate.gen_path.line(),
-				},
-				resize = { enable = false },
-				scroll = { enable = false },
-			})
-		end,
-	},
-	{
 		"echasnovski/mini.surround",
 		event = "VeryLazy",
 		version = false,
