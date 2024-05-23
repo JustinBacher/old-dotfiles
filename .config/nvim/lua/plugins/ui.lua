@@ -1,7 +1,9 @@
-local function ensure_trouble()
-	local t = require("trouble")
-	if not t.is_open() then t.open("document_diagnostics") end
-	return t
+local function trouble(cmd, opts)
+	return function()
+		local t = require("trouble")
+		if cmd ~= "toggle" and ~t.is_open() then t.open("document_diagnostics") end
+		if opts then t[cmd](opts) else t[cmd]() end
+	end
 end
 
 return {
@@ -54,26 +56,17 @@ return {
 		opts = { use_diagnostic_signs = true },
 		keys = {
 			{ "<leader>dx", "<Cmd>Trouble<CR>", desc = "Toggle Trouble" },
-			{ "<leader>dw", function() require("trouble").toggle("workspace_diagnostics") end },
-			{ "<leader>dd", function() require("trouble").toggle("document_diagnostics") end },
-			{ "<leader>dq", function() require("trouble").toggle("quickfix") end },
-			{ "<leader>dl", function() require("trouble").toggle("loclist") end },
-			{ "gR", function() require("trouble").toggle("lsp_references") end },
-			{
-				"<leader>dn",
-				function() ensure_trouble().next({ skip_groups = true, jump = true }) end,
-				desc = "Goto next workspace diagnostic",
-			},
-			{
-				"<leader>dp",
-				function() ensure_trouble().previous({ skip_groups = true, jump = true }) end,
-				desc = "Goto next workspace diagnostic",
-			},
+			{ "<leader>dw", trouble("toggle"), "workspace_diagnostics"), desc = "Workspace Diagnostics" },
+			{ "<leader>dd", trouble("toggle"), "document_diagnostics"), desc = "Document Diagnostics" },
+			{ "<leader>dq", trouble("toggle"), "quickfix"), desc = "Trouble Quickfix" },
+			{ "<leader>dl", trouble("toggle"), "loclist"), desc = "Trouble Location List" },
+			{ "gR", trouble("toggle"), "lsp_references"), desc = "Trouble Lsp References" },
+			{ "<leader>dn", trouble("next", { skip_groups = true, jump = true }), desc = "Trouble Next Diagnostic" }	},
+			{ "<leader>dp", trouble("previous", { skip_groups = true, jump = true }), desc = "Trouble Previous Diagnostic" },
 		},
 	},
 	{
 		"nvim-lualine/lualine.nvim",
-		-- version = false,
 		event = "VeryLazy",
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
@@ -148,12 +141,9 @@ return {
 		lazy = false,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			local alpha = require("alpha")
 			local dashboard = require("alpha.themes.dashboard")
-
-			-- Set header
+			
 			dashboard.section.header.val = require("config.icons").welcome
-			-- Set menu
 			dashboard.section.buttons.val = {
 				dashboard.button( "e", "  > Open File Tree" , "<Cmd>NvimTreeOpen<CR>"),
 				dashboard.button( "f", "  > Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
@@ -165,13 +155,8 @@ return {
 				dashboard.button( "s", "  > System Settings" , "cd $HOME/dotfiles/ | Telescope find_files<CR>"),
 				dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
 			}
-
 			dashboard.section.footer.val = "Code is like humor. When you have to explain it, it’s bad."
-
-			-- Send config to alpha
-			alpha.setup(dashboard.opts)
-
-			-- Disable folding on alpha buffer
+			require("alpha").setup(dashboard.opts)
 			vim.cmd("autocmd FileType alpha setlocal nofoldenable")
 		end,
 	},
@@ -210,10 +195,10 @@ return {
 					["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 					["vim.lsp.util.stylize_markdown"] = true,
 					["config.lsp.signature.enabled"] = true,
-					-- ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+					["cmp.entry.get_documentation"] = true,
 				},
 				signature = { enabled = false },
-				hover = { enabled = false },
+				hover = { enabled = true },
 			},
 			-- you can enable a preset for easier configuration
 			presets = {
@@ -262,20 +247,14 @@ return {
 	{
 		"akinsho/bufferline.nvim",
 		version = false,
-		enabled = false, -- TODO: dont think i need with lsp_lines
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
 			options = {
 				diagnostics = "nvim_lsp",
 				--- @diagnostic disable-next-line: unused-local
 				diagnostics_indicator = function(count, level, diagnostics_dict, context)
-					local s = " "
-					for e, n in pairs(diagnostics_dict) do
-						local sym = e == "error" and " " or (e == "warning" and " " or "")
-						s = s .. n .. sym
-					end
-					return s
-				end,
+					return " " .. level:match("error") and " " or " " .. count
+				  end
 			},
 		},
 },
