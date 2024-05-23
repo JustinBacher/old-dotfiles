@@ -1,12 +1,28 @@
 local function ensure_trouble()
- local t = require("trouble")
- if not t.is_open() then t.open("document_diagnostics")
- return t
+	local t = require("trouble")
+	if not t.is_open() then t.open("document_diagnostics") end
+	return t
 end
 
 return {
- { "gen740/SmoothCursor.nvim", config = true },
- { "stevearc/dressing.nvim", config = true },
+	{ "stevearc/dressing.nvim", event = "VeryLazy", config = true },
+	{ "echasnovski/mini.cursorword", event = "LazyFile", config = true },
+	{
+		"j-hui/fidget.nvim",
+		opts = {
+			suppress_on_insert = true,
+			ignore_done_already = false,
+			ignore_empty_message = true,
+		},
+	},
+	{
+		"gen740/SmoothCursor.nvim",
+		event = "LazyFile",
+		config = function()
+			---@diagnostic disable-next-line: missing-fields
+			require("smoothcursor").setup({ matrix = { enable = true } })
+		end,
+	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		opts = {
@@ -38,7 +54,7 @@ return {
 		opts = { use_diagnostic_signs = true },
 		keys = {
 			{ "<leader>dx", "<Cmd>Trouble<CR>", desc = "Toggle Trouble" },
-			{ "<leader>dw", require("trouble").toggle("workspace_diagnostics") end },
+			{ "<leader>dw", function() require("trouble").toggle("workspace_diagnostics") end },
 			{ "<leader>dd", function() require("trouble").toggle("document_diagnostics") end },
 			{ "<leader>dq", function() require("trouble").toggle("quickfix") end },
 			{ "<leader>dl", function() require("trouble").toggle("loclist") end },
@@ -101,32 +117,84 @@ return {
 		},
 	},
 	{
-		"goolord/alpha-nvim",
-		---@diagnostic disable-next-line: param-type-mismatch
-		lazy = next(vim.fn.argv()) == nil,
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function() require("alpha").setup(require("alpha.themes.dashboard").config) end,
+		"echasnovski/mini.animate",
+		event = "LazyFile",
+		version = false,
+		opts = {
+			scroll = { enable = false },
+			resize = { enable = false },
+		},
 	},
 	{
-		"rcarriga/nvim-notify",
+		"echasnovski/mini.map",
+		event = "LazyFile",
 		keys = {
-			{
-				"<leader>nd",
-				function() require("notify").dismiss({ silent = true, pending = true }) end,
-				desc = "Dismiss All Notifications",
-			},
-			{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
+			{ "<leader>mm", "lua MiniMap.toggle()<cr>", desc = "Toggle MiniMap" },
 		},
-		opts = {
-			stages = "slide",
-			render = "compact",
-			background_colour = "FloatShadow",
-			top_down = false,
-			timeout = 3000,
-			max_height = function() return math.floor(vim.o.lines * 0.75) end,
-			max_width = function() return math.floor(vim.o.columns * 0.75) end,
-			on_open = function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end,
+		config = function()
+			local map = require("mini.map")
+			map.setup({
+				integrations = {
+					map.gen_integration.builtin_search(),
+					map.gen_integration.gitsigns(),
+					map.gen_integration.diagnostic(),
+				},
+			})
+		end,
+	},
+	{
+		"goolord/alpha-nvim",
+		---@diagnostic disable-next-line: param-type-mismatch
+		lazy = false,
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			local alpha = require("alpha")
+			local dashboard = require("alpha.themes.dashboard")
+
+			-- Set header
+			dashboard.section.header.val = require("config.icons").welcome
+			-- Set menu
+			dashboard.section.buttons.val = {
+				dashboard.button( "e", "  > Open File Tree" , "<Cmd>NvimTreeOpen<CR>"),
+				dashboard.button( "f", "  > Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
+				dashboard.button( "p", "󱌢 > Find file (Projects)", ":cd $HOME/Workspace<CR><Cmd>Telescope find_files<CR>"),
+				dashboard.button( "r", "  > Recent", "<Cmd>Telescope oldfiles<CR>"),
+				dashboard.button( "l", "  > Load last session", "<Cmd>SessionManager load_session<CR>"),
+				dashboard.button( "h", "  > Load last session", "<Cmd>SessionManager load_last_session<CR>"),
+				dashboard.button( "n", "󰨇  > Nvim Settings" , "cd $HOME/dotfiles/.config/nvim | Telescope find_files<CR>"),
+				dashboard.button( "s", "  > System Settings" , "cd $HOME/dotfiles/ | Telescope find_files<CR>"),
+				dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
+			}
+
+			dashboard.section.footer.val = "Code is like humor. When you have to explain it, it’s bad."
+
+			-- Send config to alpha
+			alpha.setup(dashboard.opts)
+
+			-- Disable folding on alpha buffer
+			vim.cmd("autocmd FileType alpha setlocal nofoldenable")
+		end,
+	},
+	{
+	"rcarriga/nvim-notify",
+	keys = {
+		{
+			"<leader>nd",
+			function() require("notify").dismiss({ silent = true, pending = true }) end,
+			desc = "Dismiss All Notifications",
 		},
+		{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
+	},
+	opts = {
+		stages = "slide",
+		render = "compact",
+		background_colour = "FloatShadow",
+		top_down = false,
+		timeout = 3000,
+		max_height = function() return math.floor(vim.o.lines * 0.75) end,
+		max_width = function() return math.floor(vim.o.columns * 0.75) end,
+		on_open = function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end,
+	},
 	},
 	{
 		"folke/noice.nvim",
@@ -210,5 +278,5 @@ return {
 				end,
 			},
 		},
-	},
+},
 }

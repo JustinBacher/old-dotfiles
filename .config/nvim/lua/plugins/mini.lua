@@ -1,44 +1,8 @@
 return {
-	{ "echasnovski/mini.cursorword", event = "VeryLazy", version = false, config = true },
-	{ "echasnovski/mini.ai", event = "VeryLazy", version = false, config = true },
-	{
-		"echasnovski/mini.map",
-		version = false,
-		event = "VeryLazy",
-		keys = {
-			{ "<leader>mm", "lua MiniMap.toggle()<cr>", desc = "Toggle MiniMap" },
-		},
-		config = function()
-			local map = require("mini.map")
-			map.setup({
-				integrations = {
-					map.gen_integration.builtin_search(),
-					map.gen_integration.gitsigns(),
-					map.gen_integration.diagnostic(),
-				},
-			})
-		end,
-	},
-	{
-		"echasnovski/mini.animate",
-		event = "VeryLazy",
-		version = false,
-		config = function()
-			local animate = require("mini.animate")
-			animate.setup({
-				cursor = {
-					timing = animate.gen_timing.quartic({ duration = 222, unit = "total" }),
-					path = animate.gen_path.line(),
-				},
-				resize = { enable = false },
-				scroll = { enable = false },
-			})
-		end,
-	},
+	{ "echasnovski/mini.ai", event = "LazyFile", config = true },
 	{
 		"echasnovski/mini.surround",
-		event = "VeryLazy",
-		version = false,
+		event = "LazyFile",
 		opts = {
 			mappings = {
 				add = "gsa", -- Add surrounding in Normal and Visual modes

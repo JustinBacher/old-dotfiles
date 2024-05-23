@@ -26,13 +26,14 @@ return {
 	{
 		"tzachar/cmp-ai",
 		version = false,
+		enabled = false,
 		dependencies = "nvim-lua/plenary.nvim",
 		config = function()
 			require("cmp_ai.config"):setup({
 				provider = "Ollama",
-				max_lines = 10,
+				max_lines = 100,
 				provider_options = {
-					model = "mistral:latest",
+					model = "codellama",
 				},
 				notify = true,
 				-- notify_callback = function(msg) require("fidget").notify(msg) end,
@@ -55,7 +56,7 @@ return {
 			"roobert/tailwindcss-colorizer-cmp.nvim",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
-			"tzachar/cmp-ai",
+			-- "tzachar/cmp-ai",
 			{ "L3MON4D3/LuaSnip", version = "v2.*", build = "make install_jsregexp" },
 			{ "roobert/tailwindcss-colorizer-cmp.nvim", config = true },
 		},
@@ -82,7 +83,7 @@ return {
 					max_view_entries = 200,
 				},
 				sources = cmp.config.sources({
-					{ name = "cmp_ai", max_item_count = 1, group_index = 1 },
+					-- { name = "cmp_ai", max_item_count = 1, group_index = 1 },
 					{ name = "nvim_lsp_signature_help", group_index = 1 },
 					{ name = "luasnip", max_item_count = 5, group_index = 1 },
 					{ name = "nvim_lsp", max_item_count = 5, group_index = 1 },
@@ -93,17 +94,17 @@ return {
 				}),
 				sorting = {
 					priority_weight = 2,
-					comparators = {
-						require("cmp_ai.compare"),
-						compare.offset,
-						compare.exact,
-						compare.score,
-						compare.recently_used,
-						compare.kind,
-						compare.sort_text,
-						compare.length,
-						compare.order,
-					},
+					-- comparators = {
+					-- 	require("cmp_ai.compare"),
+					-- 	compare.offset,
+					-- 	compare.exact,
+					-- 	compare.score,
+					-- 	compare.recently_used,
+					-- 	compare.kind,
+					-- 	compare.sort_text,
+					-- 	compare.length,
+					-- 	compare.order,
+					-- },
 				},
 				---@diagnostic disable-next-line: missing-fields
 				formatting = {

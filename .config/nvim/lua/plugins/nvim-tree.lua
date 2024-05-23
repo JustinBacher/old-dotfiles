@@ -4,17 +4,13 @@ local WIDTH_RATIO = 0.5
 return {
 	"nvim-tree/nvim-tree.lua",
 	version = false,
-	lazy = next(vim.fn.argv()) == nil, ---@diagnostic disable-line: param-type-mismatch
 	dependencies = { "nvim-tree/nvim-web-devicons" },
+	keys = { { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Open File Tree" } },
 	init = function()
 		local api = require("nvim-tree.api")
 		vim.g.loaded_netrw = 1
 		vim.g.loaded_netrwPlugin = 1
-
-		-- Make tree close if last buffer
 		vim.api.nvim_create_autocmd("QuitPre", { callback = function() vim.cmd("NvimTreeClose") end })
-
-		-- If no editable buffer on open then open the tree
 		vim.api.nvim_create_autocmd("VimEnter", {
 			callback = function(data)
 				if vim.fn.filereadable(data.file) == 1 and data.file == "" and vim.bo[data.buf].buftype == "" then
@@ -23,7 +19,6 @@ return {
 			end,
 		})
 	end,
-	keys = { { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Open File Tree" } },
 	opts = {
 		view = {
 			float = {
@@ -58,7 +53,6 @@ return {
 			map("h", api.tree.close, "Close")
 			map("H", api.tree.collapse_all, "Collapse All")
 			map("l", function()
-				print("hii")
 				if api.tree.get_node_under_cursor().nodes ~= nil then
 					api.node.open.edit()
 				else

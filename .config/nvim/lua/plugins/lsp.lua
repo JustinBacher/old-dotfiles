@@ -7,7 +7,7 @@ return {
 			{ "folke/neodev.nvim", config = true },
 			{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
 		},
-		event = "LazyFile",
+		lazy = false,
 		opts = {
 			virtual_text = false,
 			virtual_lines = true,
@@ -135,11 +135,6 @@ return {
 		end,
 	},
 	-- UI
-	{ "j-hui/fidget.nvim", opts = {
-		suppress_on_insert = true,
-		ignore_done_already  = false,
-		ignore_empty_message = true,
-	} },
 	{
 		"glepnir/lspsaga.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
