@@ -38,4 +38,5 @@ return {
 	{ "<esc>", "<cmd>noh<cr><esc>", desc = "Escape and Clear hlsearch" },
 	{ "gj", "J", mode = NOT_INSERT, desc = "Join line below. (remap of J)" },
 	{ "<CR>", "o<Esc>", desc = "Add new line below" },
+	{ "?", ":%s/", desc = "Search and replace" },
 }
