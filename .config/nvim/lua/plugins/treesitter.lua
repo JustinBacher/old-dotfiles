@@ -1,8 +1,8 @@
 return {
  {
 		"andersevenrud/nvim_context_vt",
-  event = "LazyFile",
-	 config = true
+		event = "LazyFile",
+		config = true
  },
  {
 		"nvim-treesitter/nvim-treesitter",
