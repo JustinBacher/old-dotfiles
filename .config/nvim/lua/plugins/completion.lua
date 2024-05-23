@@ -32,14 +32,19 @@ return {
 			require("cmp_ai.config"):setup({
 				provider = "Ollama",
 				max_lines = 100,
-				provider_options = {
-					model = "codellama",
-				},
+				provider_options = { model = "codellama" },
 				notify = true,
 				-- notify_callback = function(msg) require("fidget").notify(msg) end,
 				run_on_every_keystroke = true,
 			})
 		end,
+	},
+	{
+		"L3MON4D3/LuaSnip",
+		dependencies = "rafamadriz/friendly-snippets",
+		version = "v2.*",
+		config = function() require("luasnip.loaders.from_vscode").lazy_load() end,
+		build = "make install_jsregexp"
 	},
 	{
 		"hrsh7th/nvim-cmp",
@@ -57,7 +62,7 @@ return {
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 			-- "tzachar/cmp-ai",
-			{ "L3MON4D3/LuaSnip", version = "v2.*", build = "make install_jsregexp" },
+			"L3MON4D3/LuaSnip",
 			{ "roobert/tailwindcss-colorizer-cmp.nvim", config = true },
 		},
 		config = function()
@@ -116,10 +121,12 @@ return {
 							ellipsis_char = "",
 							symbol_map = icons.kind,
 						})(entry, item)
+
 						local strings = vim.split(kind.kind, "%s", { trimempty = true })
 						kind.kind = " " .. (strings[1] or "") .. " "
-						kind.abbr = "" .. kind.abbr
+						kind.abbr = kind.abbr
 						kind.menu = icons.menu[entry.source.name] or ""
+
 						return kind
 					end,
 					-- before = function(entry, item) ---@diagnostic disable-line: redefined-local
@@ -162,11 +169,7 @@ return {
 
 			cmp.setup.cmdline(":", {
 				mapping = cmp.mapping.preset.cmdline(),
-				sources = cmp.config.sources({
-					{ name = "path" },
-				}, {
-					{ name = "cmdline" },
-				}),
+				sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline" } }),
 				matching = { disallow_symbol_nonprefix_matching = false }, ---@diagnostic disable-line: missing-fields
 			})
 
@@ -175,7 +178,6 @@ return {
 				cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
 			end
 			vim.api.nvim_set_hl(0, "PmenuSel", { bg = "NONE", fg = "NONE" })
-
 			vim.api.nvim_set_hl(0, "CmpItemAbbrDeprecated", { fg = "#7E8294", bg = "NONE", strikethrough = true })
 			vim.api.nvim_set_hl(0, "CmpItemAbbrMatch", { fg = "#82AAFF", bg = "NONE", bold = true })
 			vim.api.nvim_set_hl(0, "CmpItemAbbrMatchFuzzy", { fg = "#82AAFF", bg = "NONE", bold = true })
