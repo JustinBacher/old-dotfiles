@@ -24,4 +24,5 @@ require("lazy").setup({
 			disabled_plugins = { "gzip", "tarPlugin", "tohtml", "tutor", "zipPlugin", },
 		},
 	},
+ { "jsongerber/thanks.nvim", config = true }
 })
