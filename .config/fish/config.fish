@@ -1,9 +1,8 @@
-zoxide init --cmd cd fish | source
 set -gx EDITOR nvim
 
 if status is-interactive
-    and not set -q TMUX
-    exec tmux 
+	and not set -q TMUX
+    	exec tmux 
 end
 
 set -l foreground c8d3f5
@@ -32,7 +31,6 @@ set -g fish_color_search_match --background=$selection
 set -g fish_color_operator $green
 set -g fish_color_escape $pink
 set -g fish_color_autosuggestion $comment
-
 # Completion Pager Colors
 set -g fish_pager_color_progress $comment
 set -g fish_pager_color_prefix $cyan
@@ -40,3 +38,7 @@ set -g fish_pager_color_completion $foreground
 set -g fish_pager_color_description $comment
 set -g fish_pager_color_selected_background --background=$selection
 
+# Enable vim mode
+fish_vi_key_bindings
+
+zoxide init --cmd cd fish | source
