@@ -1,10 +1,13 @@
 return {
- {
+	{
 		"andersevenrud/nvim_context_vt",
 		event = "LazyFile",
-		config = true
- },
- {
+		opts = { prefix = "" },
+		config = function(_, opts)
+			require('nvim_context_vt').setup(opts)
+		end,
+	},
+	{
 		"nvim-treesitter/nvim-treesitter",
 		version = false,
 		event = "LazyFile",
@@ -66,5 +69,5 @@ return {
 			end,
 			additional_vim_regex_highlighting = false,
 		},
- },
+	},
 }

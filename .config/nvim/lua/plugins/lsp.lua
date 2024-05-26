@@ -1,11 +1,13 @@
 return {
+	{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
+	{ "folke/neodev.nvim", config = true },
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			"williamboman/mason-lspconfig.nvim",
 			"b0o/schemastore.nvim",
-			{ "folke/neodev.nvim", config = true },
-			{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
+			"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+			"folke/neodev.nvim",
 		},
 		lazy = false,
 		opts = {
@@ -28,7 +30,7 @@ return {
 				prefix = "",
 			},
 		},
-		init = function(_, opts)
+		init = function()
 			for name, sign in pairs(require("plugins.configs.icons").lsp.diagnostics) do
 				vim.fn.sign_define(name, { texthl = name, text = sign, numhl = "" })
 			end
