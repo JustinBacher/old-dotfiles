@@ -4,8 +4,9 @@ return {
 	{ "tenxsoydev/karen-yank.nvim", event = "LazyFile", config = true },
 	{
 		"Shatur/neovim-session-manager",
-		lazy = false,
-		opts = {autoload_mode = false},
+		event = "LazyFile",
+		opts = { autoload_mode = false },
+		cmd = "SessionManager",
 		build = function()
 			-- Auto save session
 			vim.api.nvim_create_autocmd({ "BufWritePre" }, {
@@ -22,18 +23,17 @@ return {
 	},
 	{
 		"monaqa/dial.nvim",
-		keys = { "<C-a>", "<C-x>", mode = { "n", "x" } },
+		keys = {
+			{ "<C-a>", "<Plug>(dial-increment)" },
+			{ "<C-x>", "<Plug>(dial-decrement)" },
+			{ "g<C-a>", "g<Plug>(dial-increment)" },
+			{ "g<C-x>", "g<Plug>(dial-decrement)" },
+			{ "<C-a>", "<Plug>(dial-increment)", mode = "v" },
+			{ "<C-x>", "<Plug>(dial-decrement)", mode = "v" },
+			{ "g<C-a>", "g<Plug>(dial-increment)", mode = "v" },
+			{ "g<C-x>", "g<Plug>(dial,-decrement)", mode = "v" },
+		},
 		config = function()
-			-- Don't know why I need to specify keymaps like this and not as lazy keys but meh whatever
-			local dial_map = require("dial.map")
-			local map = vim.keymap.set
-			local opts = { noremap = true, silent = true }
-			map("n", "<C-a>", dial_map.inc_normal(), opts)
-			map("n", "<C-x>", dial_map.dec_normal(), opts)
-			map("x", "<C-a>", dial_map.inc_visual(), opts)
-			map("x", "<C-x>", dial_map.dec_visual(), opts)
-			map("x", "g<C-a>", dial_map.inc_gvisual(), opts)
-			map("x", "g<C-x>", dial_map.dec_gvisual(), opts)
 
 			local augend = require("dial.augend")
 			require("dial.config").augends:register_group({
@@ -47,6 +47,13 @@ return {
 					augend.date.alias["%H:%M"],
 					augend.semver.alias.semver,
 					augend.constant.alias.bool,
+					augend.constant.new({ elements = { "on", "off" } }),
+					augend.constant.new({ elements = { "on", "off" } }),
+					augend.constant.new({ elements = { "On", "Off" } }),
+					augend.constant.new({ elements = { "ON", "OFF" } }),
+					augend.constant.new({ elements = { "start", "stop" } }),
+					augend.constant.new({ elements = { "Start", "Stop" } }),
+					augend.constant.new({ elements = { "START", "STOP" } }),
 				},
 			})
 		end,

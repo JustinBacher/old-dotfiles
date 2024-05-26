@@ -1,8 +1,12 @@
 local function trouble(cmd, opts)
 	return function()
 		local t = require("trouble")
-		if cmd ~= "toggle" and ~t.is_open() then t.open("document_diagnostics") end
-		if opts then t[cmd](opts) else t[cmd]() end
+		if cmd ~= "toggle" and not t.is_open() then t.open("document_diagnostics") end
+		if opts then
+			t[cmd](opts)
+		else
+			t[cmd]()
+		end
 	end
 end
 
@@ -55,14 +59,18 @@ return {
 		dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
 		opts = { use_diagnostic_signs = true },
 		keys = {
+			-- LuaFormatter off
+			-- stylua: ignore start
 			{ "<leader>dx", "<Cmd>Trouble<CR>", desc = "Toggle Trouble" },
-			{ "<leader>dw", trouble("toggle"), "workspace_diagnostics"), desc = "Workspace Diagnostics" },
-			{ "<leader>dd", trouble("toggle"), "document_diagnostics"), desc = "Document Diagnostics" },
-			{ "<leader>dq", trouble("toggle"), "quickfix"), desc = "Trouble Quickfix" },
-			{ "<leader>dl", trouble("toggle"), "loclist"), desc = "Trouble Location List" },
-			{ "gR", trouble("toggle"), "lsp_references"), desc = "Trouble Lsp References" },
-			{ "<leader>dn", trouble("next", { skip_groups = true, jump = true }), desc = "Trouble Next Diagnostic" }	},
+			{ "<leader>dw", trouble("toggle", "workspace_diagnostics"), desc = "Workspace Diagnostics" },
+			{ "<leader>dd", trouble("toggle", "document_diagnostics"), desc = "Document Diagnostics" },
+			{ "<leader>dq", trouble("toggle", "quickfix"), desc = "Trouble Quickfix" },
+			{ "<leader>dl", trouble("toggle", "loclist"), desc = "Trouble Location List" },
+			{ "gR", trouble("toggle", "lsp_references"), desc = "Trouble Lsp References" },
+			{ "<leader>dn", trouble("next", { skip_groups = true, jump = true }), desc = "Trouble Next Diagnostic" },
 			{ "<leader>dp", trouble("previous", { skip_groups = true, jump = true }), desc = "Trouble Previous Diagnostic" },
+			-- LuaFormatter on
+			-- stylua: ignore stop
 		},
 	},
 	{
@@ -87,10 +95,12 @@ return {
 					function()
 						local n = require("noice")
 						return {
-							{ n.api.status.message.get_hl, cond = n.api.status.message.has }, ---@diagnostic disable-line: undefined-field
-							{ n.api.status.command.get, cond = n.api.status.command.has, color = { fg = "#ff9e64" } }, ---@diagnostic disable-line: undefined-field
-							{ n.api.status.mode.get, cond = n.api.status.mode.has, color = { fg = "#ff9e64" } }, ---@diagnostic disable-line: undefined-field
-							{ n.api.status.search.get, cond = n.api.status.search.has, color = { fg = "#ff9e64" } }, ---@diagnostic disable-line: undefined-field
+							---@diagnostic disable: undefined-field
+							{ n.api.status.message.get_hl, cond = n.api.status.message.has },
+							{ n.api.status.command.get, cond = n.api.status.command.has, color = { fg = "#ff9e64" } },
+							{ n.api.status.mode.get, cond = n.api.status.mode.has, color = { fg = "#ff9e64" } },
+							{ n.api.status.search.get, cond = n.api.status.search.has, color = { fg = "#ff9e64" } },
+							---@diagnostic enable: undefined-field
 						}
 					end,
 				},
@@ -137,23 +147,25 @@ return {
 	},
 	{
 		"goolord/alpha-nvim",
-		---@diagnostic disable-next-line: param-type-mismatch
-		lazy = false,
+		lazy = vim.fn.argc() ~= 0 ,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			local dashboard = require("alpha.themes.dashboard")
-			
+
 			dashboard.section.header.val = require("config.icons").welcome
 			dashboard.section.buttons.val = {
-				dashboard.button( "e", "  > Open File Tree" , "<Cmd>NvimTreeOpen<CR>"),
-				dashboard.button( "f", "  > Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
-				dashboard.button( "p", "󱌢 > Find file (Projects)", ":cd $HOME/Workspace<CR><Cmd>Telescope find_files<CR>"),
-				dashboard.button( "r", "  > Recent", "<Cmd>Telescope oldfiles<CR>"),
-				dashboard.button( "l", "  > Load last session", "<Cmd>SessionManager load_session<CR>"),
-				dashboard.button( "h", "  > Load last session", "<Cmd>SessionManager load_last_session<CR>"),
-				dashboard.button( "n", "󰨇  > Nvim Settings" , "cd $HOME/dotfiles/.config/nvim | Telescope find_files<CR>"),
-				dashboard.button( "s", "  > System Settings" , "cd $HOME/dotfiles/ | Telescope find_files<CR>"),
-				dashboard.button( "q", "  > Quit NVIM", ":qa<CR>"),
+				-- stylua: ignore start
+				-- LuaFormatter off
+				dashboard.button("e", "  --> File tree", "<Cmd>NvimTreeOpen<CR>"),
+				dashboard.button("f", "  --> Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
+				dashboard.button("p", "󱌢  --> Find file (Projects)", ":cd $HOME/Workspace<CR><Cmd>Telescope find_files<CR>"),
+				dashboard.button("r", "  --> Recent files", "<Cmd>Telescope oldfiles<CR>"),
+				dashboard.button("l", "󱘖  --> Load last session", "<Cmd>SessionManager load_last_session<CR>"),
+				dashboard.button("h", "󰛔  --> Load session", "<Cmd>SessionManager load_session<CR>"),
+				dashboard.button("n", "󰨇  --> Nvim settings", "cd $HOME/dotfiles/.config/nvim<CR><Cmd>NvimTreeOpen<CR>"),
+				dashboard.button("s", "  --> System settings", "cd $HOME/dotfiles/<CR><Cmd>NvimTreeOpen<CR>"),
+				-- LuaFormatter on
+				-- stylua: ignore end
 			}
 			dashboard.section.footer.val = "Code is like humor. When you have to explain it, it’s bad."
 			require("alpha").setup(dashboard.opts)
@@ -161,25 +173,25 @@ return {
 		end,
 	},
 	{
-	"rcarriga/nvim-notify",
-	keys = {
-		{
-			"<leader>nd",
-			function() require("notify").dismiss({ silent = true, pending = true }) end,
-			desc = "Dismiss All Notifications",
+		"rcarriga/nvim-notify",
+		keys = {
+			{
+				"<leader>nd",
+				function() require("notify").dismiss({ silent = true, pending = true }) end,
+				desc = "Dismiss All Notifications",
+			},
+			{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
 		},
-		{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
-	},
-	opts = {
-		stages = "slide",
-		render = "compact",
-		background_colour = "FloatShadow",
-		top_down = false,
-		timeout = 3000,
-		max_height = function() return math.floor(vim.o.lines * 0.75) end,
-		max_width = function() return math.floor(vim.o.columns * 0.75) end,
-		on_open = function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end,
-	},
+		opts = {
+			stages = "slide",
+			render = "compact",
+			background_colour = "FloatShadow",
+			top_down = false,
+			timeout = 3000,
+			max_height = function() return math.floor(vim.o.lines * 0.75) end,
+			max_width = function() return math.floor(vim.o.columns * 0.75) end,
+			on_open = function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end,
+		},
 	},
 	{
 		"folke/noice.nvim",
@@ -188,7 +200,19 @@ return {
 			"MunifTanjim/nui.nvim",
 			"rcarriga/nvim-notify",
 		},
+		-- keys = {
+		-- 	"<S-Enter>",
+		-- 	function() require("noice").redirect(vim.fn.getcmdline()) end,
+		-- 	mode = "c",
+		-- 	desc = "Redirect Cmdline",
+		-- },
 		opts = {
+			cmdline = {
+				format = {
+					cmdline = { pattern = "^:", icon = "", lang = "vim" },
+					replace = { pattern = "^:%s/", icon = "" },
+				},
+			},
 			lsp = {
 				-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 				override = {
@@ -254,8 +278,8 @@ return {
 				--- @diagnostic disable-next-line: unused-local
 				diagnostics_indicator = function(count, level, diagnostics_dict, context)
 					return " " .. level:match("error") and " " or " " .. count
-				  end
+				end,
 			},
 		},
-},
+	},
 }
