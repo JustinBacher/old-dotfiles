@@ -1,4 +1,5 @@
 set -gx EDITOR nvim
+set -gx PAGER most
 
 if status is-interactive
 	and not set -q TMUX

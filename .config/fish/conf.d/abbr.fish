@@ -11,3 +11,5 @@ abbr yay paru
 abbr gg lazygit
 abbr stow xstow
 abbr neofetch fastfetch
+abbr cls clear
+abbr ani ani-cli
