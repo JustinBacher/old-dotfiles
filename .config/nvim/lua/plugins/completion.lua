@@ -23,6 +23,7 @@ local function prev_completion(cmp, luasnip)
 end
 
 return {
+	{ "roobert/tailwindcss-colorizer-cmp.nvim", config = true },
 	{
 		"tzachar/cmp-ai",
 		version = false,
@@ -41,29 +42,25 @@ return {
 	},
 	{
 		"L3MON4D3/LuaSnip",
-		dependencies = "rafamadriz/friendly-snippets",
 		version = "v2.*",
+		dependencies = { "rafamadriz/friendly-snippets", "saadparwaiz1/cmp_luasnip" },
 		config = function() require("luasnip.loaders.from_vscode").lazy_load() end,
-		build = "make install_jsregexp"
+		build = "make install_jsregexp",
 	},
 	{
 		"hrsh7th/nvim-cmp",
-		version = false,
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp-signature-help",
 			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lua",
+			"hrsh7th/cmp-cmdline",
 			"windwp/nvim-autopairs",
 			"onsails/lspkind-nvim",
-			"hrsh7th/cmp-cmdline",
 			"roobert/tailwindcss-colorizer-cmp.nvim",
 			"L3MON4D3/LuaSnip",
-			"saadparwaiz1/cmp_luasnip",
 			-- "tzachar/cmp-ai",
-			"L3MON4D3/LuaSnip",
-			{ "roobert/tailwindcss-colorizer-cmp.nvim", config = true },
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -88,11 +85,11 @@ return {
 				},
 				sources = cmp.config.sources({
 					-- { name = "cmp_ai", max_item_count = 1, group_index = 1 },
+					{ name = "luasnip", max_item_count = 3, group_index = 1 },
+					{ name = "nvim_lsp", max_item_count = 10, group_index = 1 },
 					{ name = "nvim_lsp_signature_help", group_index = 1 },
-					{ name = "luasnip", max_item_count = 5, group_index = 1 },
-					{ name = "nvim_lsp", max_item_count = 5, group_index = 1 },
 					{ name = "nvim_lua", group_index = 1 },
-					{ name = "path", group_index = 2 },
+					{ name = "path", group_index = 3 },
 				}, {
 					{ name = "buffer", keyword_length = 2, max_item_count = 5, group_index = 2 },
 				}),
@@ -110,7 +107,6 @@ return {
 				-- 		compare.order,
 				-- 	},
 				-- },
-				---@diagnostic disable-next-line: missing-fields
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
 					format = function(entry, item)
@@ -124,21 +120,14 @@ return {
 						local strings = vim.split(kind.kind, "%s", { trimempty = true })
 						kind.kind = " " .. (strings[1] or "") .. " "
 						kind.abbr = kind.abbr
-						kind.menu = icons.menu[entry.source.name] or ""
-
+						kind.menu = icons.menu[entry.source.name] or "" or strings[2]
 						return kind
 					end,
-					-- before = function(entry, item) ---@diagnostic disable-line: redefined-local
-					-- 	item.kind = icons.kind[item.kind] .. item.kind
-					-- 	item.menu = entry.source_name or icons.menu[entry.source_name]
-					-- 	print(entry.source_name)
-					-- 	return item
-					-- end,
 				},
 				window = {
 					completion = {
 						border = { "┌", "─", "┐", "│", "┘", "─", "└", "│" },
-						winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None", -- "Normal:Normal,Search:None",
+						winhighlight = "Normal:Normal,FloatBorder:LspBorderBG,CursorLine:PmenuSel,Search:None",
 						col_offset = 0,
 					},
 					documentation = cmp.config.window.bordered({
@@ -148,24 +137,23 @@ return {
 				mapping = {
 					["<C-f>"] = cmp.mapping.scroll_docs(-4),
 					["<C-b>"] = cmp.mapping.scroll_docs(4),
+					["<C-l>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+					["<C-j>"] = next_completion(cmp, luasnip),
+					["<C-k>"] = prev_completion(cmp, luasnip),
+					["<C-Space>"] = cmp.mapping.complete({}),
 					["<Esc>"] = function(fallback)
 						cmp.mapping.close()(fallback)
 						vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 					end,
-					["<C-l>"] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
-					["<C-j>"] = next_completion(cmp, luasnip),
-					["<C-k>"] = prev_completion(cmp, luasnip),
-					["<C-Space>"] = cmp.mapping.complete(), ---@diagnostic disable-line: missing-parameter
 				},
 			})
-			---@diagnostic disable-next-line
 
-			cmp.setup.cmdline({ "/", "?" }, {
+			cmp.setup.cmdline({ "/", "?" }, { ---@diagnostic disable-line: param-type-mismatch, missing-fields
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = { { name = "buffer" } },
 			})
 
-			cmp.setup.cmdline(":", {
+			cmp.setup.cmdline(":", { ---@diagnostic disable-line: param-type-mismatch, missing-fields
 				mapping = cmp.mapping.preset.cmdline(),
 				sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline" } }),
 				matching = { disallow_symbol_nonprefix_matching = false }, ---@diagnostic disable-line: missing-fields
@@ -175,6 +163,7 @@ return {
 			if presentAutopairs then
 				cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
 			end
+
 			local hl = vim.api.nvim_set_hl
 			hl(0, "PmenuSel", { bg = "NONE", fg = "NONE" })
 			hl(0, "CmpItemAbbrDeprecated", { fg = "#7E8294", bg = "NONE", strikethrough = true })
