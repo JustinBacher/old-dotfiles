@@ -3,7 +3,7 @@ local function git_commit_current_buffer()
 		if message == "" then print("No commit performed") end
 		-- local path = vim.split(vim.fn.expand('%'), "/")
 		-- local filename = table.remove(path, #path)
-		vim.cmd("Git add " .. vim.fn.expand('%'))
+		vim.cmd("Git add " .. vim.fn.expand('%:p'))
 		vim.cmd("Git commit  --message=" .. '"' .. message .. '"')
 
 		-- vim.cmd("Git commit " .. message)
