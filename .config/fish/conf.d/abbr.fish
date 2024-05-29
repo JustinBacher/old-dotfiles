@@ -36,7 +36,7 @@ abbr ani ani-cli
 
 # package manager shortcuts
 abbr yay paru
-abbr yays paru -S
+abbr yays paru -S -- skipreview
 abbr yayr paru -Rns
 
 # git
