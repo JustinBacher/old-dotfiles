@@ -42,4 +42,5 @@ set -g fish_pager_color_selected_background --background=$selection
 # Enable vim mode
 fish_vi_key_bindings
 
+thefuck --alias | source
 zoxide init --cmd cd fish | source

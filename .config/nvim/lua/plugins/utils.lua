@@ -1,3 +1,14 @@
+local function live_grep_from_project_git_root()
+	local function is_git_repo()
+		vim.fn.system("git rev-parse --is-inside-work-tree")
+		return vim.v.shell_error == 0
+	end
+
+	require("telescope.builtin").live_grep({
+		cwd = is_git_repo() and vim.fn.fnamemodify(vim.fn.finddir(".git", ".;"), ":h") or nil,
+	})
+end
+
 return {
 	{ "windwp/nvim-autopairs", config = true },
 	{ "echasnovski/mini.ai", event = "LazyFile", config = true },
@@ -34,7 +45,6 @@ return {
 			{ "g<C-x>", "g<Plug>(dial,-decrement)", mode = "v" },
 		},
 		config = function()
-
 			local augend = require("dial.augend")
 			require("dial.config").augends:register_group({
 				---@type table<( Augend | AugendConstant )>
@@ -76,14 +86,20 @@ return {
 		dependencies = { "nvim-telescope/telescope-media-files.nvim" },
 		cmd = "Telescope",
 		keys = {
-			{ "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
-			{ "<leader>/", "<cmd>Telescope live_grep<cr>", desc = "Grep (Root Dir)" },
+			{ "<leader><space>", "<Cmd>Telescope find_files<CR>", desc = "Find Files (Root Dir)" },
+			{ "<leader>/", live_grep_from_project_git_root, desc = "Grep (Root Dir)" },
 			{ "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
 			{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Telescope Buffers" },
 			{
 				"<leader>ff",
 				function() require("telescope.builtin").find_files({ cwd = require("telescope.utils").buffer_dir() }) end,
 				desc = "Find Files (cwd)",
+			},
+		},
+		opts = {
+			pickers = {
+				find_files = { hidden = true },
+				live_grep = { hidden = true },
 			},
 		},
 		build = function()

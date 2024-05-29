@@ -10,24 +10,15 @@ local function trouble(cmd, opts)
 	end
 end
 
+local function dismiss_all_notifications() require("notify").dismiss({ silent = true, pending = true }) end
+
 return {
 	{ "stevearc/dressing.nvim", event = "VeryLazy", config = true },
 	{ "echasnovski/mini.cursorword", event = "LazyFile", config = true },
 	{
-		"j-hui/fidget.nvim",
-		opts = {
-			suppress_on_insert = true,
-			ignore_done_already = false,
-			ignore_empty_message = true,
-		},
-	},
-	{
 		"gen740/SmoothCursor.nvim",
 		event = "LazyFile",
-		config = function()
-			---@diagnostic disable-next-line: missing-fields
-			require("smoothcursor").setup({ matrix = { enable = true } })
-		end,
+		config = function() require("smoothcursor").setup({ matrix = { enable = true } }) end, ---@diagnostic disable-line: missing-fields
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
@@ -42,6 +33,7 @@ return {
 		},
 		config = function(_, opts)
 			local hooks = require("ibl.hooks")
+			hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
 			hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
 				for hl, color in pairs(opts) do
 					vim.api.nvim_set_hl(0, hl, { fg = color })
@@ -49,18 +41,15 @@ return {
 			end)
 			vim.g.rainbow_delimiters = { highlight = opts }
 			require("ibl").setup({ scope = { highlight = opts } })
-
-			hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
 		end,
 	},
 	{
 		"folke/trouble.nvim",
 		cmd = "Trouble",
-		dependencies = { "nvim-tree/nvim-web-devicons", lazy = true },
+		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = { use_diagnostic_signs = true },
-		keys = {
-			-- LuaFormatter off
-			-- stylua: ignore start
+		-- stylua: ignore start
+		keys = { -- LuaFormatter off
 			{ "<leader>dx", "<Cmd>Trouble<CR>", desc = "Toggle Trouble" },
 			{ "<leader>dw", trouble("toggle", "workspace_diagnostics"), desc = "Workspace Diagnostics" },
 			{ "<leader>dd", trouble("toggle", "document_diagnostics"), desc = "Document Diagnostics" },
@@ -69,18 +58,13 @@ return {
 			{ "gR", trouble("toggle", "lsp_references"), desc = "Trouble Lsp References" },
 			{ "<leader>dn", trouble("next", { skip_groups = true, jump = true }), desc = "Trouble Next Diagnostic" },
 			{ "<leader>dp", trouble("previous", { skip_groups = true, jump = true }), desc = "Trouble Previous Diagnostic" },
-			-- LuaFormatter on
-			-- stylua: ignore stop
-		},
+		}, -- LuaFormatter on
+		-- stylua: ignore stop
 	},
 	{
 		"nvim-lualine/lualine.nvim",
-		event = "VeryLazy",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-			"letieu/harpoon-lualine",
-			"folke/noice.nvim",
-		},
+		event = "LazyFile",
+		dependencies = { "nvim-tree/nvim-web-devicons", "letieu/harpoon-lualine", "folke/noice.nvim" },
 		opts = {
 			options = {
 				theme = "tokyonight",
@@ -132,7 +116,7 @@ return {
 		"echasnovski/mini.map",
 		event = "LazyFile",
 		keys = {
-			{ "<leader>mm", "lua MiniMap.toggle()<cr>", desc = "Toggle MiniMap" },
+			{ "<leader>mm", "<Cmd>MiniMap.toggle()<CR>", desc = "Toggle MiniMap" },
 		},
 		config = function()
 			local map = require("mini.map")
@@ -147,15 +131,14 @@ return {
 	},
 	{
 		"goolord/alpha-nvim",
-		lazy = vim.fn.argc() ~= 0 ,
+		lazy = vim.fn.argc() ~= 0,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			local dashboard = require("alpha.themes.dashboard")
 
 			dashboard.section.header.val = require("config.icons").welcome
-			dashboard.section.buttons.val = {
-				-- stylua: ignore start
-				-- LuaFormatter off
+			-- stylua: ignore start
+			dashboard.section.buttons.val = { -- LuaFormatter off
 				dashboard.button("e", "  --> File tree", "<Cmd>NvimTreeOpen<CR>"),
 				dashboard.button("f", "  --> Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
 				dashboard.button("p", "󱌢  --> Find file (Projects)", ":cd $HOME/Workspace<CR><Cmd>Telescope find_files<CR>"),
@@ -164,9 +147,8 @@ return {
 				dashboard.button("h", "󰛔  --> Load session", "<Cmd>SessionManager load_session<CR>"),
 				dashboard.button("n", "󰨇  --> Nvim settings", "cd $HOME/dotfiles/.config/nvim<CR><Cmd>NvimTreeOpen<CR>"),
 				dashboard.button("s", "  --> System settings", "cd $HOME/dotfiles/<CR><Cmd>NvimTreeOpen<CR>"),
-				-- LuaFormatter on
-				-- stylua: ignore end
-			}
+			} -- LuaFormatter on
+			-- stylua: ignore end
 			dashboard.section.footer.val = "Code is like humor. When you have to explain it, it’s bad."
 			require("alpha").setup(dashboard.opts)
 			vim.cmd("autocmd FileType alpha setlocal nofoldenable")
@@ -175,11 +157,7 @@ return {
 	{
 		"rcarriga/nvim-notify",
 		keys = {
-			{
-				"<leader>nd",
-				function() require("notify").dismiss({ silent = true, pending = true }) end,
-				desc = "Dismiss All Notifications",
-			},
+			{ "<leader>nd", dismiss_all_notifications, desc = "Dismiss All Notifications" },
 			{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
 		},
 		opts = {
@@ -196,21 +174,11 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
-		},
-		-- keys = {
-		-- 	"<S-Enter>",
-		-- 	function() require("noice").redirect(vim.fn.getcmdline()) end,
-		-- 	mode = "c",
-		-- 	desc = "Redirect Cmdline",
-		-- },
+		dependencies = { "MunifTanjim/nui.nvim", "rcarriga/nvim-notify" },
 		opts = {
 			cmdline = {
 				format = {
 					cmdline = { pattern = "^:", icon = "", lang = "vim" },
-					replace = { pattern = "^:%s/", icon = "" },
 				},
 			},
 			lsp = {
@@ -248,29 +216,9 @@ return {
 		},
 	},
 	{
-		"rcarriga/nvim-notify",
-		keys = {
-			{
-				"<leader>nd",
-				function() require("notify").dismiss({ silent = true, pending = true }) end,
-				desc = "Dismiss All Notifications",
-			},
-			{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
-		},
-		opts = {
-			stages = "slide",
-			render = "compact",
-			background_colour = "FloatShadow",
-			top_down = false,
-			timeout = 3000,
-			max_height = function() return math.floor(vim.o.lines * 0.75) end,
-			max_width = function() return math.floor(vim.o.columns * 0.75) end,
-			on_open = function(win) vim.api.nvim_win_set_config(win, { zindex = 100 }) end,
-		},
-	},
-	{
 		"akinsho/bufferline.nvim",
 		version = false,
+		lazy = "LazyFile",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
 			options = {
