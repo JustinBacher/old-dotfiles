@@ -179,6 +179,7 @@ return {
 			cmdline = {
 				format = {
 					cmdline = { pattern = "^:", icon = "", lang = "vim" },
+					substitute = { kind = "search", pattern = "^:%%s/", icon = "󰛔", lang = "regex" },
 				},
 			},
 			lsp = {
