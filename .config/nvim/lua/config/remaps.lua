@@ -2,7 +2,9 @@ NOT_INSERT = { "n", "x", "v", "o" }
 
 return {
 	-- Global ease of use
-	{ "<leader>qq", "<cmd>qa<cr>", desc = "Quit All Buffers" },
+	{ "<leader>qq", "<cmd>qa<cr>", desc = "Quit all buffers" },
+	{ "<leader>qb", "<cmd>bd<cr>", desc = "Quit current buffer" },
+	{ "<leader>bd", "<cmd>bd<cr>", desc = "Quit current buffer" },
 	{ "<leader>qw", "<cmd>wq<cr>", desc = "Write current buffer and Quit" },
 	{ "<leader>l", "<cmd>Lazy<cr>", desc = "Open Lazy" },
 	{ "<leader>w", "<cmd>w<cr><esc>", desc = "Write file" },
