@@ -1,15 +1,21 @@
+local function format_buffer() require("conform").format({ async = true, lsp_fallback = true }) end,
+local function ufo_peek() return require("ufo").peekFoldedLinesUnderCursor() or vim.lsp.buf.hover() end,
+
 return {
 	{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
 	{ "folke/neodev.nvim", config = true },
 	{
 		"nvimtools/none-ls.nvim",
+		dependencies = "nvimtools/none-ls-extras.nvim",
 		config = function()
 			local null_ls = require("null-ls")
 			null_ls.setup({
 				sources = {
 					null_ls.builtins.formatting.stylua,
 					null_ls.builtins.completion.spell,
-					require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+					require("none-ls.diagnostics.eslint"),
+					require("none-ls.diagnostics.cpplint"),
+					require("none-ls.formatting.jq"),
 				},
 			})
 		end,
@@ -21,14 +27,13 @@ return {
 			"b0o/schemastore.nvim",
 			"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
 			"folke/neodev.nvim",
+			"nvimtools/none-ls.nvim",
 		},
 		lazy = false,
 		opts = {
 			virtual_text = false,
 			virtual_lines = true,
-			signs = {
-				active = require("plugins.configs.icons"),
-			},
+			signs = { active = require("plugins.configs.icons") },
 			flags = { debounce_text_changes = 200 },
 			update_in_insert = false,
 			underline = true,
@@ -52,9 +57,9 @@ return {
 			vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "shadow" })
 		end,
 		config = function(_, opts)
-			local lspconfig = require("lspconfig")
-
 			vim.diagnostic.config(opts)
+
+			local lspconfig = require("lspconfig")
 			lspconfig.util.default_config = vim.tbl_deep_extend("force", lspconfig.util.default_config, opts)
 
 			for server_name, server_config in pairs(require("plugins.configs.langs")) do
@@ -69,9 +74,13 @@ return {
 			end
 		end,
 	},
+
+	-- Formatting
+
 	{
 		"stevearc/conform.nvim",
-		cmd = { "ConformInfo" },
+		event = "BufWritePre",
+		cmd = "ConformInfo",
 		opts = {
 			formatters_by_ft = {
 				lua = { "luaformatter", "stylua" },
@@ -82,17 +91,12 @@ return {
 			format_on_save = { timeout_ms = 500, lsp_fallback = true },
 		},
 		keys = {
-			{
-				"<leader>bf",
-				function() require("conform").format({ async = true, lsp_fallback = true }) end,
-				desc = "Format buffer",
-				mode = { "n", "v" },
-			},
+			{ "<leader>bf", format_buffer, desc = "Format buffer" },
 		},
 	},
 	{
 		"kevinhwang91/nvim-ufo",
-		dependencies = { "kevinhwang91/promise-async" },
+		dependencies = "kevinhwang91/promise-async",
 		event = "LazyFile",
 		init = function()
 			vim.o.foldlevel = 99
@@ -102,15 +106,10 @@ return {
 		keys = {
 			{ "zR", function() require("ufo").openAllFolds() end, desc = "Open all folds" },
 			{ "zM", function() require("ufo").closeAllFolds() end, desc = "Close all folds" },
-			{
-				"zK",
-				function() return require("ufo").peekFoldedLinesUnderCursor() or vim.lsp.buf.hover() end,
-				desc = "Peek Fold",
-			},
+			{ "zK", ufo_peek, desc = "Peek Fold" },
 		},
 		opts = {
-			---@diagnostic disable-next-line: unused-local
-			provider_selector = function(bufnr, filetype, buftype) return { "lsp", "indent" } end,
+			provider_selector = function() return { "lsp", "indent" } end,
 		},
 	},
 	{
@@ -123,10 +122,7 @@ return {
 
 			npairs.add_rules({
 				Rule(" ", " ", "lua")
-					:with_pair(function(opts)
-						local pair = opts.line:sub(opts.col - 1, opts.col)
-						return vim.tbl_contains({ "{}" }, pair)
-					end)
+					:with_pair(function(opts) return vim.tbl_contains({ "{}" }, opts.line:sub(opts.col - 1, opts.col)) end)
 					:with_move(cond.none())
 					:with_cr(cond.none())
 					:with_del(function(opts)
@@ -143,16 +139,16 @@ return {
 					:with_del(cond.none())
 					:use_key("}")
 					-- Removes the trailing whitespace that can occur without this
-					:replace_map_cr(
-						function(_) return "<C-c>2xi<CR><C-c>O" end
-					),
+					:replace_map_cr(function(_) return "<C-c>2xi<CR><C-c>O" end),
 			})
 		end,
 	},
-	-- UI
+	 -- Lsp UI plugins
+
+	{ "Fildo7525/pretty_hover", event = "LspAttach", config = true },
 	{
 		"glepnir/lspsaga.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		dependencies = "nvim-tree/nvim-web-devicons",
 		event = "LazyFile",
 		opts = {
 			implement = { enable = true, lang = { "rust" } },
