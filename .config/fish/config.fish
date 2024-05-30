@@ -6,6 +6,9 @@ if status is-interactive
     	exec tmux 
 end
 
+# may want to set this later to something but stop greeting me every time fish :) lvu
+set -g fish_greeting
+
 set -l foreground c8d3f5 #c8d3f5
 set -l selection 2d3f76 #2d3f76
 set -l comment 636da6 #636da6
@@ -40,7 +43,18 @@ set -g fish_pager_color_description $comment
 set -g fish_pager_color_selected_background --background=$selection
 
 # Enable vim mode
-fish_vi_key_bindings
+if status is-interactive
+  set fish_cursor_default     block      blink
+  set fish_cursor_insert      line       blink
+  set fish_cursor_replace_one underscore blink
+  set fish_cursor_visual      block
+
+  function fish_user_key_bindings
+    # Execute this once per mode that emacs bindings should be used in
+    fish_default_key_bindings -M insert
+    fish_vi_key_bindings --no-erase insert
+  end
+end
 
 thefuck --alias | source
 zoxide init --cmd cd fish | source
