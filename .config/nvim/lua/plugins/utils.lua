@@ -110,6 +110,18 @@ return {
 		config = true,
 	},
 	{
+		"nvim-telescope/telescope-ui-select.nvim",
+		keys = {
+			{ "<A-k>", function() vim.lsp.buf.code_action() end, "Open code actions" },
+		},
+		config = function()
+			require("telescope").setup({
+				extensions = { ["ui-select"] = { require("telescope.themes").get_dropdown({}) } },
+			})
+			require("telescope").load_extension("ui-select")
+		end,
+	},
+	{
 		"ziontee113/icon-picker.nvim",
 		keys = {
 			{ "<leader>if", "<cmd>IconPickerNormal<cr>", desc = "Find Icon" },

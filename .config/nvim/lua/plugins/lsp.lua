@@ -1,5 +1,5 @@
-local function format_buffer() require("conform").format({ async = true, lsp_fallback = true }) end,
-local function ufo_peek() return require("ufo").peekFoldedLinesUnderCursor() or vim.lsp.buf.hover() end,
+local function format_buffer() require("conform").format({ async = true, lsp_fallback = true }) end
+local function ufo_peek() return require("ufo").peekFoldedLinesUnderCursor() or vim.lsp.buf.hover() end
 
 return {
 	{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },

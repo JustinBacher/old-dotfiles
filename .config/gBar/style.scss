@@ -1,6 +1,6 @@
 // colorscheme(dracula)
 // See https://github.com/dracula/dracula-theme/blob/master/LICENSE or dracula/LICENSE for the license
-$bg: #282a36;
+$bg: rgb(40 42 54 / 60%);
 $fg: #f8f8f2;
 $inactive: #44475a;
 $darkblue: #6272a4;
@@ -24,19 +24,19 @@ $textsize: 16px;
 }
 
 .popup {
-    background-color: $bg;
-    // margin: 8px;
+    // background-color: $bg;
+    margin: 8px;
     color: #50fa7b;
     border-radius: 16px;
 }
 
 .bar {
-    margin: 8px;
+    // background-color: $bg;
+    margin: 10px;
 }
 
 menu {
     padding: 8px 8px 8px 8px;
-    margin: 8px;
 }
 
 // debug

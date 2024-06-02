@@ -7,7 +7,7 @@ Config(
   x: Fraction(0.5),
 
   // The vertical position, works the same as `x`
-  y: Absolute(0),
+  y: Absolute(200),
 
   // The width of the runner
   width: Absolute(800),
@@ -43,5 +43,7 @@ Config(
     "libsymbols.so",
     "libshell.so",
     "libtranslate.so",
+	// "librink.so",
+	// "libkidex.so",
   ],
 )

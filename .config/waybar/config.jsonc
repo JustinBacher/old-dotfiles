@@ -16,7 +16,7 @@
 
 	"modules-left": ["custom/padd","custom/l_end","custom/power","custom/cliphist","custom/wbar","custom/theme","custom/wallchange","custom/r_end","custom/l_end","wlr/taskbar","custom/spotify","custom/r_end","","custom/padd"],
 	"modules-center": ["custom/padd","custom/l_end","idle_inhibitor","clock","custom/r_end","custom/padd"],
-	"modules-right": ["custom/padd","custom/l_end","tray","custom/notification","battery","custom/r_end","custom/l_end","backlight","network","bluetooth","pulseaudio","pulseaudio#microphone","custom/keybindhint","custom/r_end","custom/padd"],
+	"modules-right": ["custom/padd","custom/l_end","tray","battery","custom/r_end","custom/l_end","backlight","network","bluetooth","pulseaudio","pulseaudio#microphone","custom/keybindhint","custom/r_end","custom/padd"],
 
 
 // sourced from modules based on config.ctl //
@@ -25,8 +25,8 @@
         "format": "{}",
         "rotate": 0,
         "exec": "echo ; echo  logout",
-        "on-click": "/home/justin/.config/hyprdots/scripts/logoutlaunch.sh 2",
-        "on-click-right": "/home/justin/.config/hyprdots/scripts/logoutlaunch.sh 1",
+        "on-click": "/home/justin/dotfiles/.config/hypr/scripts/logoutlaunch.sh 2",
+        "on-click-right": "/home/justin/dotfiles/.config/hypr/scripts/logoutlaunch.sh 1",
         "interval" : 86400, // once every day
         "tooltip": true
     },
@@ -35,9 +35,9 @@
         "format": "{}",
         "rotate": 0,
         "exec": "echo ; echo 󰅇 clipboard history",
-        "on-click": "sleep 0.1 && /home/justin/.config/hyprdots/scripts/cliphist.sh c",
-        "on-click-right": "sleep 0.1 && /home/justin/.config/hyprdots/scripts/cliphist.sh d",
-        "on-click-middle": "sleep 0.1 && /home/justin/.config/hyprdots/scripts/cliphist.sh w",
+        "on-click": "sleep 0.1 && /home/justin/dotfiles/.config/hypr/scripts/cliphist.sh c",
+        "on-click-right": "sleep 0.1 && /home/justin/dotfiles/.config/hypr/scripts/cliphist.sh d",
+        "on-click-middle": "sleep 0.1 && /home/justin/dotfiles/.config/hypr/scripts/cliphist.sh w",
         "interval" : 86400, // once every day
         "tooltip": true
     },
@@ -46,9 +46,9 @@
         "format": "{}", //    //
         "rotate": 0,
         "exec": "echo ; echo  switch bar //  dock",
-        "on-click": "/home/justin/.config/hyprdots/scripts/wbarconfgen.sh n",
-        "on-click-right": "/home/justin/.config/hyprdots/scripts/wbarconfgen.sh p",
-        "on-click-middle": "sleep 0.1 && /home/justin/.config/hyprdots/scripts/quickapps.sh kitty firefox spotify code dolphin",
+        "on-click": "/home/justin/dotfiles/.config/hypr/scripts/wbarconfgen.sh n",
+        "on-click-right": "/home/justin/dotfiles/.config/hypr/scripts/wbarconfgen.sh p",
+        "on-click-middle": "sleep 0.1 && /home/justin/dotfiles/.config/hypr/scripts/quickapps.sh kitty firefox spotify code dolphin",
         "interval" : 86400,
         "tooltip": true
     },
@@ -57,9 +57,9 @@
         "format": "{}",
         "rotate": 0,
         "exec": "echo ; echo 󰟡 switch theme",
-        "on-click": "/home/justin/.config/hyprdots/scripts/themeswitch.sh -n",
-        "on-click-right": "/home/justin/.config/hyprdots/scripts/themeswitch.sh -p",
-        "on-click-middle": "sleep 0.1 && /home/justin/.config/hyprdots/scripts/themeselect.sh",
+        "on-click": "/home/justin/dotfiles/.config/hypr/scripts/themeswitch.sh -n",
+        "on-click-right": "/home/justin/dotfiles/.config/hypr/scripts/themeswitch.sh -p",
+        "on-click-middle": "sleep 0.1 && /home/justin/dotfiles/.config/hypr/scripts/themeselect.sh",
         "interval" : 86400, // once every day
         "tooltip": true
     },
@@ -68,9 +68,9 @@
         "format": "{}",
         "rotate": 0,
         "exec": "echo ; echo 󰆊 switch wallpaper",
-        "on-click": "/home/justin/.config/hyprdots/scripts/swwwallpaper.sh -n",
-        "on-click-right": "/home/justin/.config/hyprdots/scripts/swwwallpaper.sh -p",
-        "on-click-middle": "sleep 0.1 && /home/justin/.config/hyprdots/scripts/swwwallselect.sh",
+        "on-click": "/home/justin/dotfiles/.config/hypr/scripts/swwwallpaper.sh -n",
+        "on-click-right": "/home/justin/dotfiles/.config/hypr/scripts/swwwallpaper.sh -p",
+        "on-click-middle": "sleep 0.1 && /home/justin/dotfiles/.config/hypr/scripts/swwwallselect.sh",
         "interval" : 86400, // once every day
         "tooltip": true
     },
@@ -100,8 +100,8 @@
         "on-click": "playerctl play-pause --player spotify",
         "on-click-right": "playerctl next --player spotify",
         "on-click-middle": "playerctl previous --player spotify",
-        "on-scroll-up": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -p spotify i",
-        "on-scroll-down": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -p spotify d",
+        "on-scroll-up": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -p spotify i",
+        "on-scroll-down": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -p spotify d",
         "max-length": 25,
         "escape": true,
         "tooltip": true
@@ -204,9 +204,9 @@
         "rotate": 0,
         "format-muted": "婢",
         "on-click": "pavucontrol -t 3",
-        "on-click-middle": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -o m",
-        "on-scroll-up": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -o i",
-        "on-scroll-down": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -o d",
+        "on-click-middle": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -o m",
+        "on-scroll-up": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -o i",
+        "on-scroll-down": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -o d",
         "tooltip-format": "{icon} {desc} // {volume}%",
         "scroll-step": 5,
         "format-icons": {
@@ -226,9 +226,9 @@
         "format-source": "",
         "format-source-muted": "",
         "on-click": "pavucontrol -t 4",
-        "on-click-middle": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -i m",
-        "on-scroll-up": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -i i",
-        "on-scroll-down": "/home/justin/.config/hyprdots/scripts/volumecontrol.sh -i d",
+        "on-click-middle": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -i m",
+        "on-scroll-up": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -i i",
+        "on-scroll-down": "/home/justin/dotfiles/.config/hypr/scripts/volumecontrol.sh -i d",
         "tooltip-format": "{format_source} {source_desc} // {source_volume}%",
         "scroll-step": 5
     },
@@ -236,30 +236,9 @@
     "custom/keybindhint": {
         "format": " ",
         "rotate": 0,
-        "on-click": "/home/justin/.config/hyprdots/scripts/keybinds_hint.sh"
+        "on-click": "/home/justin/dotfiles/.config/hypr/scripts/keybinds_hint.sh"
     },
 
-	  "custom/notification": {
-	    "tooltip": false,
-	    "format": "{} {icon}",
-	    "format-icons": {
-	      "notification": "<span foreground='red'><sup></sup></span>",
-	      "none": "",
-	      "dnd-notification": "<span foreground='red'><sup></sup></span>",
-	      "dnd-none": "",
-	      "inhibited-notification": "<span foreground='red'><sup></sup></span>",
-	      "inhibited-none": "",
-	      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
-	      "dnd-inhibited-none": ""
-	    },
-	    "return-type": "json",
-	    "exec-if": "which swaync-client",
-	    "exec": "swaync-client -swb",
-	    "on-click": "swaync-client -t -sw",
-	    "on-click-right": "swaync-client -d -sw",
-	    "escape": true
-	  },
-	
 
 // modules for padding //
 
