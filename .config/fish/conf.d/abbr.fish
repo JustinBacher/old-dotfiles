@@ -13,10 +13,11 @@ abbr dft dutree
 abbr dfs dutree -s
 
 # Safetynets [Parenting changing perms on / #]
-alias chown='chown -v --preserve-root'
-alias chmod='chmod -v --preserve-root'
-alias chgrp='chgrp --preserve-root'
-alias chmox="chmod +x --preserve-root"
+abbr chown chown -v --preserve-root
+abbr chmod chmod -v --preserve-root
+abbr chgrp chgrp --preserve-root
+abbr chmox chmod +x --preserve-root
+
 
 # shortening common commands
 abbr h history
@@ -64,3 +65,5 @@ abbr ffs fuck
 abbr fucking sudo
 abbr please sudo !!
 abbr dammit fuck
+
+abbr py python3
