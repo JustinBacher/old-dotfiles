@@ -139,7 +139,7 @@ return {
 			dashboard.section.header.val = require("config.icons").welcome
 			-- stylua: ignore start
 			dashboard.section.buttons.val = { -- LuaFormatter off
-				dashboard.button("e", "  --> File tree", "<Cmd>NvimTreeOpen<CR>"),
+				dashboard.button("e", "  --> File tree", "<leader>e<CR>"),
 				dashboard.button("f", "  --> Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
 				dashboard.button("p", "󱌢  --> Find file (Projects)", ":cd $HOME/Workspace<CR><Cmd>Telescope find_files<CR>"),
 				dashboard.button("r", "  --> Recent files", "<Cmd>Telescope oldfiles<CR>"),
