@@ -2,9 +2,18 @@ local HEIGHT_RATIO = 0.8
 local WIDTH_RATIO = 0.5
 
 return {
+	---@type LazySpec
+	{
+		"mikavilpas/yazi.nvim",
+		dependencies = "nvim-lua/plenary.nvim",
+		event = "VeryLazy",
+		keys = { { "<leader>e", function() require("yazi").yazi() end, desc = "Open the file manager" } },
+		opts = { open_for_directories = false },
+	},
 	"nvim-tree/nvim-tree.lua",
+	enabled = false,
 	version = false,
-	dependencies = { "nvim-tree/nvim-web-devicons" },
+	dependencies = "nvim-tree/nvim-web-devicons",
 	keys = { { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "Open File Tree" } },
 	init = function()
 		local api = require("nvim-tree.api")
@@ -44,8 +53,9 @@ return {
 			api.config.mappings.default_on_attach(bufnr)
 
 			local function map(key, op, desc, opts)
-				local default_opts = { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-				vim.keymap.set( "n", key, op, vim.tbl_deep_extend("force", default_opts, opts or {}))
+				local default_opts =
+					{ desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+				vim.keymap.set("n", key, op, vim.tbl_deep_extend("force", default_opts, opts or {}))
 			end
 
 			map("<BS>", api.tree.change_root_to_parent, "Up")

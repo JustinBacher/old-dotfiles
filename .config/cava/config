@@ -1,0 +1,7 @@
+
+[smoothing]
+
+# Disables or enables the so-called "Monstercat smoothing" with or without "waves". Set to 0 to disable.
+; monstercat = 1
+; waves = 1
+; noise_reduction 50
