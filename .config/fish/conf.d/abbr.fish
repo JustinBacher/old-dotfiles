@@ -1,28 +1,31 @@
 # file and directory manipulation
-abbr rm "rm -iv"
-abbr cp "cp -iv"
-abbr mv "mv -iv"
+abbr rm rm -iv
+abbr cp cp -iv
+abbr mv mv -iv
 abbr ln ln -iv
-abbr mkdir "mkdir -pv"
+abbr mkdir mkdir -pv
+
+# file explorer
+abbr e yazi
 
 # using custom implementations of base linux commands
-abbr ls "eza -lag --header"
+abbr ls eza -lag --header
 abbr stow xstow
 abbr df duf
 abbr dft dutree
 abbr dfs dutree -s
 
 # Safetynets [Parenting changing perms on / #]
-alias chown='chown -v --preserve-root'
-alias chmod='chmod -v --preserve-root'
-alias chgrp='chgrp --preserve-root'
-alias chmox="chmod +x --preserve-root"
+abbr chown chown -v --preserve-root
+abbr chmod chmod -v --preserve-root
+abbr chgrp chgrp --preserve-root
+abbr chmox chmod +x --preserve-root
 
 # shortening common commands
 abbr h history
 abbr cls clear
 abbr c clear
-abbr which "type -a"
+abbr which type -a
 abbr sd shutdown now
 abbr rb reboot
 
