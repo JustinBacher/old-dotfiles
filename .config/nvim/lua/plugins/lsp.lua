@@ -3,7 +3,7 @@ local function ufo_peek() return require("ufo").peekFoldedLinesUnderCursor() or 
 
 return {
 	{ "https://git.sr.ht/~whynothugo/lsp_lines.nvim", version = false, config = true },
-	{ "folke/neodev.nvim", config = true },
+	{ "folke/neodev.nvim",                            config = true },
 	{
 		"nvimtools/none-ls.nvim",
 		dependencies = "nvimtools/none-ls-extras.nvim",
@@ -104,9 +104,9 @@ return {
 			vim.o.foldenable = true
 		end,
 		keys = {
-			{ "zR", function() require("ufo").openAllFolds() end, desc = "Open all folds" },
+			{ "zR", function() require("ufo").openAllFolds() end,  desc = "Open all folds" },
 			{ "zM", function() require("ufo").closeAllFolds() end, desc = "Close all folds" },
-			{ "zK", ufo_peek, desc = "Peek Fold" },
+			{ "zK", ufo_peek,                                      desc = "Peek Fold" },
 		},
 		opts = {
 			provider_selector = function() return { "lsp", "indent" } end,
@@ -138,12 +138,12 @@ return {
 					:with_move(function(opts) return opts.char == "}" end)
 					:with_del(cond.none())
 					:use_key("}")
-					-- Removes the trailing whitespace that can occur without this
+				-- Removes the trailing whitespace that can occur without this
 					:replace_map_cr(function(_) return "<C-c>2xi<CR><C-c>O" end),
 			})
 		end,
 	},
-	 -- Lsp UI plugins
+	-- Lsp UI plugins
 
 	{ "Fildo7525/pretty_hover", event = "LspAttach", config = true },
 	{
@@ -156,25 +156,25 @@ return {
 			code_action = { extend_gitsigns = true },
 		},
 		keys = {
-			{ "ga", "<cmd>Lspsaga finder<cr>", desc = "Open symbol finder" },
-			{ "ghi", "<cmd>Lspsaga finder imp<cr>", desc = "Find all implementations" },
-			{ "ghr", "<cmd>Lspsaga finder ref<cr>", desc = "Find all references" },
-			{ "ghd", "<cmd>Lspsaga finder def<cr>", desc = "Find all definitions" },
-			{ "gr", "<cmd>Lspsaga rename<cr>", desc = "Rename symbol" },
-			{ "gR", "<cmd>Lspsaga rename ++project<cr>", desc = "Rename symbol (project)" },
-			{ "gd", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek definition" },
-			{ "gD", "<cmdLspsaga goto_definition<cr>", desc = "Goto definition" },
-			{ "gt", "<cmd>Lspsaga peek_type_definition<cr>", desc = "Peek type definition" },
-			{ "gT", "<cmd>Lspsaga goto_type_definition<cr>", desc = "Goto type definition" },
+			{ "ga",         "<cmd>Lspsaga finder<cr>",                          desc = "Open symbol finder" },
+			{ "ghi",        "<cmd>Lspsaga finder imp<cr>",                      desc = "Find all implementations" },
+			{ "ghr",        "<cmd>Lspsaga finder ref<cr>",                      desc = "Find all references" },
+			{ "ghd",        "<cmd>Lspsaga finder def<cr>",                      desc = "Find all definitions" },
+			{ "gr",         "<cmd>Lspsaga rename<cr>",                          desc = "Rename symbol" },
+			{ "gR",         "<cmd>Lspsaga rename ++project<cr>",                desc = "Rename symbol (project)" },
+			{ "gd",         "<cmd>Lspsaga peek_definition<cr>",                 desc = "Peek definition" },
+			{ "gD",         "<cmdLspsaga goto_definition<cr>",                  desc = "Goto definition" },
+			{ "gt",         "<cmd>Lspsaga peek_type_definition<cr>",            desc = "Peek type definition" },
+			{ "gT",         "<cmd>Lspsaga goto_type_definition<cr>",            desc = "Goto type definition" },
 			{ "<leader>sl", "<cmd>Lspsaga show_line_diagnostics ++unfocus<cr>", desc = "Show line diagnostics" },
-			{ "<leader>sc", "<cmd>Lspsaga show_cursor_diagnostics<cr>", desc = "Show cursor diagnostics" },
-			{ "<leader>sb", "<cmd>Lspsaga show_buf_diagnostics<cr>", desc = "Show buffer diagnostics" },
-			{ "<leader>sw", "<cmd>TroubleToggle<cr>", desc = "Show workspace diagnostics" },
-			{ "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = "Jump to previous diagnostic" },
-			{ "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = "Jump to next diagnostic" },
-			{ "go", "<cmd>Lspsaga outline<cr>", desc = "Show outline" },
-			{ "<A-d>", "<cmd>Lspsaga term_toggle<cr>", desc = "Toggle floating terminal", mode = { "n", "t" } },
-			{ "<leader>a", "<cmd>Lspsaga code_action<cr>", desc = "Show code actions", mode = { "n", "v" } },
+			{ "<leader>sc", "<cmd>Lspsaga show_cursor_diagnostics<cr>",         desc = "Show cursor diagnostics" },
+			{ "<leader>sb", "<cmd>Lspsaga show_buf_diagnostics<cr>",            desc = "Show buffer diagnostics" },
+			{ "<leader>sw", "<cmd>TroubleToggle<cr>",                           desc = "Show workspace diagnostics" },
+			{ "[d",         "<cmd>Lspsaga diagnostic_jump_prev<cr>",            desc = "Jump to previous diagnostic" },
+			{ "]d",         "<cmd>Lspsaga diagnostic_jump_next<cr>",            desc = "Jump to next diagnostic" },
+			{ "go",         "<cmd>Lspsaga outline<cr>",                         desc = "Show outline" },
+			{ "<A-d>",      "<cmd>Lspsaga term_toggle<cr>",                     desc = "Toggle floating terminal",   mode = { "n", "t" } },
+			{ "<leader>a",  "<cmd>Lspsaga code_action<cr>",                     desc = "Show code actions",          mode = { "n", "v" } },
 		},
 	},
 }

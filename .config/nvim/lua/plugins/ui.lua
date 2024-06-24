@@ -1,3 +1,5 @@
+local function dismiss_all_notifications() require("notify").dismiss({ silent = true, pending = true }) end
+
 local function trouble(cmd, opts)
 	return function()
 		local t = require("trouble")
@@ -10,16 +12,11 @@ local function trouble(cmd, opts)
 	end
 end
 
-local function dismiss_all_notifications() require("notify").dismiss({ silent = true, pending = true }) end
-
 return {
-	{ "stevearc/dressing.nvim", event = "VeryLazy", config = true },
+	{ "stevearc/dressing.nvim",      event = "VeryLazy", config = true },
 	{ "echasnovski/mini.cursorword", event = "LazyFile", config = true },
-	{
-		"gen740/SmoothCursor.nvim",
-		event = "LazyFile",
-		config = function() require("smoothcursor").setup({ matrix = { enable = true } }) end, ---@diagnostic disable-line: missing-fields
-	},
+	{ "gen740/SmoothCursor.nvim",    event = "LazyFile", opts = { matrix = { enable = true } }, },
+	{ "echasnovski/mini.animate",    event = "LazyFile", opts = { scroll = { enable = false }, resize = { enable = false } } },
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		opts = {
@@ -50,13 +47,13 @@ return {
 		opts = { use_diagnostic_signs = true },
 		-- stylua: ignore start
 		keys = { -- LuaFormatter off
-			{ "<leader>dx", "<Cmd>Trouble<CR>", desc = "Toggle Trouble" },
-			{ "<leader>dw", trouble("toggle", "workspace_diagnostics"), desc = "Workspace Diagnostics" },
-			{ "<leader>dd", trouble("toggle", "document_diagnostics"), desc = "Document Diagnostics" },
-			{ "<leader>dq", trouble("toggle", "quickfix"), desc = "Trouble Quickfix" },
-			{ "<leader>dl", trouble("toggle", "loclist"), desc = "Trouble Location List" },
-			{ "gR", trouble("toggle", "lsp_references"), desc = "Trouble Lsp References" },
-			{ "<leader>dn", trouble("next", { skip_groups = true, jump = true }), desc = "Trouble Next Diagnostic" },
+			{ "<leader>dx", "<Cmd>Trouble<CR>",                                       desc = "Toggle Trouble" },
+			{ "<leader>dw", trouble("toggle", "workspace_diagnostics"),               desc = "Workspace Diagnostics" },
+			{ "<leader>dd", trouble("toggle", "document_diagnostics"),                desc = "Document Diagnostics" },
+			{ "<leader>dq", trouble("toggle", "quickfix"),                            desc = "Trouble Quickfix" },
+			{ "<leader>dl", trouble("toggle", "loclist"),                             desc = "Trouble Location List" },
+			{ "gR",         trouble("toggle", "lsp_references"),                      desc = "Trouble Lsp References" },
+			{ "<leader>dn", trouble("next", { skip_groups = true, jump = true }),     desc = "Trouble Next Diagnostic" },
 			{ "<leader>dp", trouble("previous", { skip_groups = true, jump = true }), desc = "Trouble Previous Diagnostic" },
 		}, -- LuaFormatter on
 		-- stylua: ignore stop
@@ -81,9 +78,9 @@ return {
 						return {
 							---@diagnostic disable: undefined-field
 							{ n.api.status.message.get_hl, cond = n.api.status.message.has },
-							{ n.api.status.command.get, cond = n.api.status.command.has, color = { fg = "#ff9e64" } },
-							{ n.api.status.mode.get, cond = n.api.status.mode.has, color = { fg = "#ff9e64" } },
-							{ n.api.status.search.get, cond = n.api.status.search.has, color = { fg = "#ff9e64" } },
+							{ n.api.status.command.get,    cond = n.api.status.command.has, color = { fg = "#ff9e64" } },
+							{ n.api.status.mode.get,       cond = n.api.status.mode.has,    color = { fg = "#ff9e64" } },
+							{ n.api.status.search.get,     cond = n.api.status.search.has,  color = { fg = "#ff9e64" } },
 							---@diagnostic enable: undefined-field
 						}
 					end,
@@ -101,15 +98,6 @@ return {
 			},
 			tabline = {},
 			extensions = {},
-		},
-	},
-	{
-		"echasnovski/mini.animate",
-		event = "LazyFile",
-		version = false,
-		opts = {
-			scroll = { enable = false },
-			resize = { enable = false },
 		},
 	},
 	{
@@ -141,7 +129,8 @@ return {
 			dashboard.section.buttons.val = { -- LuaFormatter off
 				dashboard.button("e", "  --> File tree", "<Cmd>NvimTreeOpen<CR>"),
 				dashboard.button("f", "  --> Find file (cwd)", "<Cmd>Telescope find_files<CR>"),
-				dashboard.button("p", "󱌢  --> Find file (Projects)", ":cd $HOME/Workspace<CR><Cmd>Telescope find_files<CR>"),
+				dashboard.button("p", "󱌢  --> Find file (Projects)",
+					":cd $HOME/projects<CR><Cmd>Telescope find_files<CR>"),
 				dashboard.button("r", "  --> Recent files", "<Cmd>Telescope oldfiles<CR>"),
 				dashboard.button("l", "󱘖  --> Load last session", "<Cmd>SessionManager load_last_session<CR>"),
 				dashboard.button("h", "󰛔  --> Load session", "<Cmd>SessionManager load_session<CR>"),
@@ -157,7 +146,7 @@ return {
 	{
 		"rcarriga/nvim-notify",
 		keys = {
-			{ "<leader>nd", dismiss_all_notifications, desc = "Dismiss All Notifications" },
+			{ "<leader>nd", dismiss_all_notifications,   desc = "Dismiss All Notifications" },
 			{ "<leader>nh", "<cmd>Telescope notify<cr>", desc = "Notification History" },
 		},
 		opts = {
@@ -218,8 +207,7 @@ return {
 	},
 	{
 		"akinsho/bufferline.nvim",
-		version = false,
-		lazy = "LazyFile",
+		event = "LazyFile",
 		dependencies = "nvim-tree/nvim-web-devicons",
 		opts = {
 			options = {

@@ -1,4 +1,5 @@
 return {
+	"fladson/vim-kitty", -- Not exactly treesitter related but it does do syntax highlighting
 	{
 		"andersevenrud/nvim_context_vt",
 		event = "LazyFile",
