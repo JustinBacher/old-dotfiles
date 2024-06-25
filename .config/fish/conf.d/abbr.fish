@@ -10,6 +10,7 @@ abbr e yazi
 
 # using custom implementations of base linux commands
 abbr ls eza -lag --header
+abbr lt eza --tree --level=2
 abbr stow xstow
 abbr df duf
 abbr dft dutree
