@@ -8,7 +8,10 @@ return {
 		dependencies = "nvim-lua/plenary.nvim",
 		event = "VeryLazy",
 		keys = { { "<leader>e", function() require("yazi").yazi() end, desc = "Open the file manager" } },
-		opts = { open_for_directories = false },
+		opts = {
+			open_for_directories = true,
+			floating_window_scaling_factor = 0.7,
+		},
 	},
 	"nvim-tree/nvim-tree.lua",
 	enabled = false,
