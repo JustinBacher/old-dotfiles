@@ -4,7 +4,7 @@
 
 window#waybar {
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: "VictorMono Nerd Font", monospace;
+    font-family: "VictorMono Nerd Font Bold", monospace;
     background-color: rgba(26, 27, 38, 0.8);
     border-bottom: 0px;
     color: #ebdbb2;
@@ -60,7 +60,6 @@ button:hover {
     padding: 0 5px;
     background-color: transparent;
     color: #2A2F41;
-    border-radius: 0;
 }
 
 /*#workspaces button:first-child {*/
@@ -98,17 +97,29 @@ button:hover {
 #mpris,
 #load,
 #cpu,
+#network,
 #memory {
-    padding: 0 10px;
+    padding: 0 5px;
     background-color: transparent;
     color: #A9B1D6;
 	font-weight: 900;
 }
 
-#wireplumber{
+#clock {
+	padding: 0 8px 0 8px;
+	background-color: #2A2F41;
+    color: #A9B1D6;
+}
+
+#wireplumber {
 	color: #73DACA;
 }
+
 #cpu {
+	color: #F2748B;
+}
+
+#network {
 	color: #E0AF68;
 }
 
@@ -117,7 +128,7 @@ button:hover {
 }
 
 #custom.dots {
-    padding: 0 10px;
+    padding: 0 5px;
     background-color: transparent;
 	color: #FC9C63;
 	font-weight: 900;
@@ -140,7 +151,10 @@ button:hover {
 }
 
 #cava {
-    padding: 0 5px;
+    padding: 0 0px;
+    background-color: #2A2F41;
+	color: #7AA2F7;
+	/*transform: translateX(20px);*/
 }
 
 #battery.charging, #battery.plugged {
