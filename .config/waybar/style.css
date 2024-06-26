@@ -1,12 +1,11 @@
 * {
     font-size: 14px;
-    border-radius: 5px;
 }
 
 window#waybar {
     /* `otf-font-awesome` is required to be installed for icons */
-    font-family: "VictorMono Nerd Font";
-    background-color: transparent;
+    font-family: "VictorMono Nerd Font", monospace;
+    background-color: rgba(26, 27, 38, 0.8);
     border-bottom: 0px;
     color: #ebdbb2;
     transition-property: background-color;
@@ -30,15 +29,15 @@ window#waybar.solo {
 }
 */
 
-.modules-right {
-    margin: 10px 10px 0 0;
-}
-.modules-center {
-    margin: 10px 0 0 0;
-}
-.modules-left {
-    margin: 10px 0 0 10px;
-}
+/*.modules-right {*/
+/*    margin: 10px 10px 0 0;*/
+/*}*/
+/*.modules-center {*/
+/*    margin: 10px 0 0 0;*/
+/*}*/
+/*.modules-left {*/
+/*    margin: 10px 0 0 10px;*/
+/*}*/
 
 button {
     /* Use box-shadow instead of border so the text isn't offset */
@@ -54,26 +53,27 @@ button:hover {
 } */
 
 #workspaces {
-    background-color: #282828;
+    background-color: #7AA2F7;
 }
 
 #workspaces button {
     padding: 0 5px;
     background-color: transparent;
-    color: #ebdbb2;
+    color: #2A2F41;
     border-radius: 0;
 }
 
-#workspaces button:first-child {
-    border-radius: 5px 0 0 5px;
-}
+/*#workspaces button:first-child {*/
+/*    border-radius: 5px 0 0 5px;*/
+/*}*/
 
-#workspaces button:last-child {
-    border-radius: 0 5px 5px 0;
-}
+/*#workspaces button:last-child {*/
+/*    border-radius: 0 5px 5px 0;*/
+/*}*/
 
 #workspaces button:hover {
-    color: #d79921;
+    background-color: #2A2F41;
+	color: #A9B1D6;
 }
 
 #workspaces button.focused {
@@ -100,8 +100,27 @@ button:hover {
 #cpu,
 #memory {
     padding: 0 10px;
-    background-color: #282828;
-    color: #ebdbb2;
+    background-color: transparent;
+    color: #A9B1D6;
+	font-weight: 900;
+}
+
+#wireplumber{
+	color: #73DACA;
+}
+#cpu {
+	color: #E0AF68;
+}
+
+#memory {
+	color: #414868;
+}
+
+#custom.dots {
+    padding: 0 10px;
+    background-color: transparent;
+	color: #FC9C63;
+	font-weight: 900;
 }
 
 #mode {
@@ -164,8 +183,9 @@ label:focus {
 }
 
 #mpris.playing {
-    background-color: #d79921;
-    color: #282828;
+    background-color: #2A2F41;
+	margin-right: 10px;
+    color: #7AA2F7;
 }
 
 #tray menu {
