@@ -14,10 +14,19 @@ local is_windows = os:find("windows") ~= nil
 -- ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝
 --  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝ 
 
+config.window_close_confirmation = 'NeverPrompt'
+
+-- Cursor
+config.default_cursor_style = 'BlinkingBar'
+config.animation_fps = 1
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "EaseOut"
+
 -- Input
 config.enable_kitty_keyboard = true
 config.use_ime = true
 
+-- Only visual bell
 config.audible_bell = 'Disabled',
 config.visual_bell = {
         fade_in_duration_ms = 20,
