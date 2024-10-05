@@ -16,12 +16,6 @@ local is_windows = os:find("windows") ~= nil
 
 config.window_close_confirmation = 'NeverPrompt'
 
--- Cursor
-config.default_cursor_style = 'BlinkingBar'
-config.animation_fps = 1
-config.cursor_blink_ease_in = "Constant"
-config.cursor_blink_ease_out = "EaseOut"
-
 -- Input
 config.enable_kitty_keyboard = true
 config.use_ime = true
@@ -29,10 +23,10 @@ config.use_ime = true
 -- Only visual bell
 config.audible_bell = 'Disabled',
 config.visual_bell = {
-        fade_in_duration_ms = 20,
-        fade_out_duration_ms = 200,
-        fade_in_function = 'Linear',
-        fade_out_function = 'EaseOut',
+    fade_in_duration_ms = 20,
+    fade_out_duration_ms = 200,
+    fade_in_function = 'Linear',
+    fade_out_function = 'EaseOut',
 }
 
 -- ███████╗ ██████╗ ███╗   ██╗████████╗
@@ -41,7 +35,7 @@ config.visual_bell = {
 -- ██╔══╝  ██║   ██║██║╚██╗██║   ██║   
 -- ██║     ╚██████╔╝██║ ╚████║   ██║   
 -- ╚═╝      ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   
-                                    
+
 config.font = wezterm.font( {
     { family = "VictorMono Nerd Font", weight = "regular" }
 } )
@@ -51,6 +45,18 @@ if is_darwin then
 else
     config.font_size = 13
 end
+
+--  ██████╗██╗   ██╗██████╗ ███████╗ ██████╗ ██████╗ 
+-- ██╔════╝██║   ██║██╔══██╗██╔════╝██╔═══██╗██╔══██╗
+-- ██║     ██║   ██║██████╔╝███████╗██║   ██║██████╔╝
+-- ██║     ██║   ██║██╔══██╗╚════██║██║   ██║██╔══██╗
+-- ╚██████╗╚██████╔╝██║  ██║███████║╚██████╔╝██║  ██║
+--  ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝
+
+config.default_cursor_style = 'BlinkingBar'
+config.animation_fps = 1
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_ease_out = "EaseOut"
 
 -- ██╗    ██╗██╗███╗   ██╗██████╗  ██████╗ ██╗    ██╗
 -- ██║    ██║██║████╗  ██║██╔══██╗██╔═══██╗██║    ██║
